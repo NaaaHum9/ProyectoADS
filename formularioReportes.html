@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Reportes</title>
+</head>
+<body>
+    <header></header>
+    <nav>
+        <div class="buscador"><form method="get" id="buscarform">
+            <fieldset>
+                <input type="text" id="" value="" placeholder="Buscar">
+                <button>Click</button>
+                <i class="search"></i>
+            </fieldset>
+        </form></div>
+        
+        <div class="perfil-usuario">
+            <img src="" alt="">
+        </div>
+
+        <div class="botones-container">
+            <button class="boton">Inicio</button>
+            <button class="boton">Espacios</button>
+            <button class="boton">Partida</button>
+            <button class="boton">Reporte</button>
+        </div>
+    </nav>
+
+    <main>
+        <section>
+            <div>
+                <h3>Formulario de Reportes</h3>
+            </div>
+            <form action="" id="resgistro-usuario">
+                <ul>
+                    <li>
+                        <label for="descripcion">Descripcion del Reporte</label>
+                        <input type="text" name="descripcion" id="descripcion"/>
+                    </li>
+                    <li>
+                        <label for="fecha">Fecha</label>
+                        <input type="date" name="fecha" id="fecha"/>
+                    </li>
+                    <li>
+                        <label for="lugar">Lugar</label>
+                        <input type="text" name="lugar" id="lugar"/>
+                    </li>
+                    <li>
+                        <label for="nombre">Nombre de quien realiza el reporte o Anonimo si lo prefiere</label>
+                        <input type="text" name="nombre" id="nombre"/>
+                    </li>
+                    <li>
+                        <label for="tipo">Tipo de reporte</label>
+                        <input type="text" name="tipo" id="tipo" list="tipo-opciones">
+                        <datalist id="tipo-opciones">
+                            <option value="Personal del Espacio Deportivo"></option>
+                            <option value="Equipamiento"></option>
+                            <option value="Instalaciones"></option>
+                            <option value="Usuarios del Espacio Deportivo"></option>
+                        </datalist>
+                    </li>
+                    <li>
+                        <label for="imagen">Nombre de usuario</label>
+                        <input type="text" name="imagen" id="imagen"/>
+                    </li>
+                    <li>
+                        <label for="contacto">Contacto</label>
+                        <input type="text" name="contacto" id="contacto"/>
+                    </li>
+                </ul>
+            </form>
+            <div class="div-boton-resgistro">
+                <button class="boton-registro">Enviar Reporte</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+
+    </footer>
+
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        nav{
+            background-color: #D9D9D9;
+        }   
+
+        .botones-container{
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+        }
+
+        .boton{
+            padding: 5px 20px;
+            cursor: pointer;
+        }
+        
+        #resgistro-usuario{
+            display: flex;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        h3{
+            border: 2px solid;
+            padding: 15px;
+            margin-left: 150px;
+            margin-right: 150px;
+            text-align: center;
+            background-color: #D9D9D9;
+        }
+
+        ul{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 20px;
+        }
+        
+        li{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .div-boton-resgistro{
+            padding-top: 50px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .boton-registro{
+            font-size: 22px;
+            padding: 10px 40px;
+            cursor: pointer;
+        }
+    </style>
+</body>
+</html>
