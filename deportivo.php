@@ -115,7 +115,7 @@ $arr = mysqli_fetch_array($sql);
 </head>
 
 <body style="background-color: rgba(255,255,255,0.75);">
-<nav  class="navbar navbar-expand-lg navbar-light bg-ligh">
+    <nav  class="navbar navbar-expand-lg navbar-light bg-ligh">
         <a class="navButton" href="index.php">Inicio</a>
         <a class="navButton" href="buscador.php">Deportivos</a>
         <a class="navButton" disabled href="#"></a>
@@ -152,6 +152,98 @@ $arr = mysqli_fetch_array($sql);
                 </b>
                 <p><?php echo $arr[4]; ?></p>
                 <iframe src=<?php $arr[5]?> width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <div class="">
+                    <div id="map" style="width: 100%; height: 400px;"></div>
+                    <script src="https://cdn.jsdelivr.net/npm/ol@v10.2.1/dist/ol.js"></script>
+                    <script>
+                        
+                        var latitude = 0;
+                        var longitude = 0;
+                        
+                        $.ajax({
+                            url: 'https://maps.googleapis.com/maps/api/geocode/json',
+                            type: 'GET',
+                            data: {
+                                address: '<?php echo $arr[2]; ?>',
+                                key: 'AIzaSyCjDGDm_S9_UwCk7TBTOkP3UToE3rk3n90'
+                            },
+                            success: function(response) {
+                                if (response.status === 'OK') {
+                                    var coordenadas = response.results[0].geometry.location;
+                                    
+                                    arreglocoordenadas = [coordenadas.lng,coordenadas.lat];
+                                    console.log(coordenadas);
+                                    
+                                    var coordenadasWEBMERC= ol.proj.fromLonLat(arreglocoordenadas);
+                                    var map = new ol.Map({
+                                        target: 'map',
+                                        layers: [
+                                            new ol.layer.Tile({
+                                                source: new ol.source.OSM()
+                                            })
+                                        ],
+                                        view: new ol.View({
+                                            center: coordenadasWEBMERC,
+                                            zoom: 17
+                                        })
+                            
+                                    });
+                                    var marker = new ol.Feature({
+                                        geometry: new ol.geom.Point(coordenadasWEBMERC)
+                                    });
+
+                                    var vectorSource = new ol.source.Vector({
+                                        features: [marker]
+                                    });
+
+                                    var markerVectorLayer = new ol.layer.Vector({
+                                        source: vectorSource
+                                    });
+
+                                    map.addLayer(markerVectorLayer);
+                        console.log(map);
+                                } else {
+                                    console.error('Error api geocoding: ' + response.status);
+                                }
+                            },
+                            error: function() {
+                                console.error('Error api geocoding.');
+                            }
+                        });
+                        $.ajax({
+                            url: 'https://maps.googleapis.com/maps/api/place/nearbysearch/json',
+                            type: 'GET',
+                            data: {
+                                location: location.lat + ',' + location.lng,
+                                radius: 1500,
+                                type: 'store',
+                                key: 'AIzaSyCjDGDm_S9_UwCk7TBTOkP3UToE3rk3n90'
+                            },
+                            success: function(response) {
+                                if (response.status === 'OK') {
+                                    var stores = response.results;
+                                    stores.forEach(function(store) {
+                                        var coordenadas = [store.geometry.location.lng, store.geometry.location.lat];
+                                        var coordenadasWEBMERC = ol.proj.fromLonLat(coordenadas);
+                                        var Marcador = new ol.Feature({
+                                            geometry: new ol.geom.Point(coordenadasWEBMERC)
+                                        });
+                                        vectorSource.addFeature(Marcador);
+                                    });
+                                } else {
+                                    console.error('Error api nearbysearch: ' + response.status);
+                                }
+                            },
+                            error: function() {
+                                console.error('Error nerabysearch request.');
+                            }
+                        });
+                        
+
+                        
+                    </script>
+                    
+                </div>
             </div>
 
             <div class="col-sm-6">
