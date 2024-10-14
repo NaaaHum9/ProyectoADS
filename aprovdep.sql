@@ -32,7 +32,7 @@ CREATE TABLE `calificacion` (
   `idUsuario` int NOT NULL,
   `idDeportivo` int NOT NULL,
   `calificacion` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Disparadores `calificacion`
@@ -62,7 +62,7 @@ CREATE TABLE `comentdeportivo` (
   `contenido` text NOT NULL,
   `fecha` datetime NOT NULL,
   `idDeportivo` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `comentdeportivo`
@@ -96,7 +96,7 @@ CREATE TABLE `comentusuario` (
   `contenido` text NOT NULL,
   `fecha` timestamp NOT NULL,
   `idUsuario` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `comentusuario`
@@ -117,7 +117,7 @@ CREATE TABLE `deporte` (
   `idDeporte` int NOT NULL,
   `idUsuario` int NOT NULL,
   `deporte` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -133,7 +133,7 @@ CREATE TABLE `deportivo` (
   `oferta` text NOT NULL,
   `mapa` text NOT NULL,
   `calificacion` decimal(1,1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `deportivo`
@@ -155,7 +155,7 @@ CREATE TABLE `imgdepor` (
   `idImgDepor` int NOT NULL,
   `ruta` varchar(255) DEFAULT NULL,
   `idDeportivo` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `imgdepor`
@@ -178,7 +178,7 @@ CREATE TABLE `reputacion` (
   `autor` int NOT NULL,
   `calificado` int NOT NULL,
   `reputacion` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Disparadores `reputacion`
@@ -209,7 +209,7 @@ CREATE TABLE `usuario` (
   `pass` varchar(255) NOT NULL,
   `imagen` varchar(255) DEFAULT NULL,
   `reputacion` decimal(3,1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
