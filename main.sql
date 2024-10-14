@@ -1,43 +1,72 @@
-
 CREATE TABLE usuario (
     idUsuario INT AUTO_INCREMENT PRIMARY KEY,
     nombre TEXT NOT NULL,
+    apellidos TEXT NOT NULL,
     correo TEXT NOT NULL,
     pass VARCHAR(255) NOT NULL,
     imagen VARCHAR(255),
+    nombreUsuario VARCHAR(255),
+    alcaldia TEXT NOT NULL,
+    partidas VARCHAR(255),
+    deporte VARCHAR(255),
+    cursos VARCHAR(255),
+    clubOrganizacion VARCHAR(255),
+    amigos VARCHAR(255),
     reputacion DECIMAL(3, 1) NOT NULL
 );
 
-CREATE TABLE comentUsuario ( idComentUsuario INT auto_increment PRIMARY KEY,
+CREATE TABLE comentUsuario ( 
+    idComentUsuario INT auto_increment PRIMARY KEY,
     autor int not null,
     contenido text not null,
     fecha date not null,
     idUsuario int not null,
     FOREIGN KEY (autor) REFERENCES usuario(idUsuario),
     FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
-    );
-CREATE TABLE reputacion ( idReputacion INT PRIMARY KEY,
+);
+
+CREATE TABLE reputacion ( 
+    idReputacion INT PRIMARY KEY,
     autor int not null,
     calificado int not null,
     reputacion int,
     FOREIGN KEY (autor) REFERENCES usuario(idUsuario),
     FOREIGN KEY (calificado) REFERENCES usuario(idUsuario)
-    );
-CREATE TABLE deporte ( idDeporte INT auto_increment PRIMARY KEY,
+);
+
+CREATE TABLE deporte ( 
+    idDeporte INT auto_increment PRIMARY KEY,
     idUsuario int not null,
     deporte varchar(50) not null,
     FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
-     );
+);
 
-CREATE TABLE deportivo ( idDeportivo INT PRIMARY KEY auto_increment,
+CREATE TABLE deportivo ( 
+    idDeportivo INT PRIMARY KEY auto_increment,
     nombre text not null,
     direccion text not null,
     horario text  not null,
     oferta text not null,
     mapa text not null,
-    calificacion DECIMAL(1, 1) not null);
+    imagen TEXT,
+    imagenSecundarias TEXT,
+    fechaRegistro DATETIME,
+    tipoEspacio VARCHAR(100) NOT NULL,
+    banosCantidad INT,
+    banosStatus VARCHAR(100),
+    banosTipo VARCHAR(100),
+    comercios TEXT,
+    vigilaciaCantidad INT,
+    vigilanciaStatus VARCHAR(100),
+    vigilanciaTipo VARCHAR(100),
+    puertasEntradas INT,
+    aceptaMascotas BOOLEAN,
+    costo DECIMAL(10, 2),
+    calificacion DECIMAL(1, 1) not null
+);
 
-CREATE TABLE calificacion ( idCalificacion INT PRIMARY KEY,
+CREATE TABLE calificacion ( 
+    idCalificacion INT PRIMARY KEY,
     idUsuario int not null,
     idDeportivo int not null,
     calificacion int not null,
@@ -45,7 +74,8 @@ CREATE TABLE calificacion ( idCalificacion INT PRIMARY KEY,
     FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
     );
 
-CREATE TABLE comentDeportivo ( idComentDeportivo INT auto_increment PRIMARY KEY,
+CREATE TABLE comentDeportivo ( 
+    idComentDeportivo INT auto_increment PRIMARY KEY,
     autor int not null,
     contenido text not null,
     fecha date not null,
@@ -53,11 +83,115 @@ CREATE TABLE comentDeportivo ( idComentDeportivo INT auto_increment PRIMARY KEY,
     FOREIGN KEY (autor) REFERENCES usuario(idUsuario),
     FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
     );
-CREATE TABLE imgDepor (idImgDepor INT auto_increment PRIMARY KEY,
+
+CREATE TABLE imgDepor (
+    idImgDepor INT auto_increment PRIMARY KEY,
     ruta VARCHAR(255),
     idDeportivo int not null,
     FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
     );
+
+CREATE TABLE canchas(
+    idCancha INT auto_increment PRIMARY KEY,
+    etiqueta varchar(100), /*puede ser una letra con un numero CF1*/
+    deporteCancha VARCHAR(100),
+    medidasCancha VARCHAR(255),
+    tipoSueloCancha VARCHAR(100),
+    senalamientosCancha TEXT,
+    equipamientoCanchaTipo VARCHAR(100),
+    equipamientoCanchaStatus VARCHAR(100),
+    equipamientoCanchaCantidad INT,
+    iluminacionCanchaCantidad INT,
+    iluminacionCanchaStatus VARCHAR(100),
+    iluminacionCanchaTipo varchar(100),
+    techadoCancha BOOLEAN,
+    techadoCanchaTipo VARCHAR(100),
+    gradasCanchaTipo VARCHAR(100),
+    gradasCanchaStatus VARCHAR(100),
+    gradasCanchaCantidad INT,
+    banosCanchaCantidad INT,
+    banosCanchasStatus VARCHAR(100),
+    banosCanchasTipo VARCHAR(100),
+    vestidoresCanchaTipo INT,
+    vestidoresCanchaStatus VARCHAR(100),
+    vestidoresCanchaCantidad INT,
+    ubicacionPoligono VARCHAR(255),
+    direccionEnDeportivo VARCHAR(255),
+    horarioCancha VARCHAR(100)
+);
+
+CREATE TABLE negocios(
+    idNegocio INT auto_increment PRIMARY KEY, 
+    nombreNegocio VARCHAR(100),
+    duenoNegocio VARCHAR(100),
+    serviciosNegocio VARCHAR(100),
+    productosNegocio VARCHAR(100),
+    horarioNegocio VARCHAR(100)
+    tipoNegocio VARCHAR(255),
+    ubicacionNegocio VARCHAR(100),
+    descripcionNegocio VARCHAR(255),
+    imagenesNegocio VARCHAR(255)
+    
+);
+
+CREATE TABLE partidas(
+    idPartida INT auto_increment PRIMARY KEY,
+    nombrePartida VARCHAR(255), 
+    lugarPartida VARCHAR(255),
+    fechaPartida DATE,
+    duracionPartida TIME,
+    descripcionPartida TEXT,
+    deportePartida VARCHAR(100),
+    empresaPatrocinioPartida VARCHAR(255),
+    publicoDirigido VARCHAR(255),
+    nivelExperiencia VARCHAR(100),
+    horaReunion TIME,
+    transporte VARCHAR(255),
+    indicacionesExtra TEXT,
+    unifromes VARCHAR(255)
+);
+
+CREATE TABLE torneos(
+    idTorneo INT auto_increment PRIMARY KEY,
+    nombreTorneo VARCHAR(255) NOT NULL,
+    objetivoTorneo TEXT,
+    descripcionTorneo TEXT,
+    modalidadTorneo VARCHAR(100),
+    fechasProgramadas DATE,
+    numeroHoras INT,
+    precio DECIMAL(10, 2),
+    ligaInscripciones VARCHAR(255),
+    calificacionesTorneo DECIMAL(3,2),
+    comentariosTorneo TEXT,
+    ubicacionTorneo VARCHAR(255),
+    premiosTorneo VARCHAR(255),
+    empresaPatrocinadora VARCHAR(255),
+    prerequisitos TEXT,
+    materialEquipamineto TEXT,
+    nivelExperiencia VARCHAR(100)
+);
+
+CREATE TABLE cursos(
+    idCurso int auto_increment PRIMARY KEY,
+    nombreCurso VARCHAR(255) NOT NULL,
+    objetivoCurso TEXT,
+    descripcionCurso TEXT,
+    modalidadCurso VARCHAR(100),
+    fechasProgramadas DATE,
+    numeroHoras INT,
+    precio DECIMAL(10, 2),
+    ligaInscripciones VARCHAR(255),
+    calificaciones DECIMAL(3,2),
+    comentariosCursos TEXT,
+    ubicacionCurso VARCHAR(255),
+    tipoReconocimiento VARCHAR(255),
+    empresaPatrocinadora VARCHAR(255),
+    prerequisitos TEXT,
+    materialEquipamineto TEXT,
+    nivelExperiencia VARCHAR(100)
+
+);
+
 DELIMITER $$
 CREATE TRIGGER updateAvgDepor
 AFTER INSERT ON calificacion
