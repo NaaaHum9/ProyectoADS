@@ -4,7 +4,7 @@ session_start();
 $servidor = "localhost";
 $usuario = "root";
 $clave = "root";
-$baseDeDatos = "aprovDep";
+$baseDeDatos = "test";
 
 $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 
@@ -25,6 +25,9 @@ $sql2 = mysqli_query($enlace, "SELECT * , usuario.nombre, usuario.imagen
     FROM comentDeportivo INNER JOIN usuario ON comentDeportivo.autor = usuario.idUsuario where idDeportivo=$idDepor ORDER BY fecha DESC");
 $arr = mysqli_fetch_array($sql);
 
+$sql3 = mysqli_query($enlace,"SELECT * FROM partida where idDeportivo =".$idDepor);
+$partidas = mysqli_fetch_array($sql3);
+
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +43,7 @@ $arr = mysqli_fetch_array($sql);
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
         
-
+        #partidas{display: none;}
         nav {
             background-color: rgb(35, 81, 0);
         }
@@ -135,7 +138,7 @@ $arr = mysqli_fetch_array($sql);
         <div class="row content">
             <div class="col-sm-4 sidenav">
                 
-                <img id="imgDep" class="img-thumbnail" src=<?php echo '"'.$arr[8].'"' ?> >
+                <img id="imgDep" class="img-thumbnail" src=<?php echo '"'.$arr[20].'"' ?> >
                 <b>
                     <p>Calificación: <?php echo $arr[6]; ?>/5.0</p>
                 </b>
@@ -151,7 +154,6 @@ $arr = mysqli_fetch_array($sql);
                     <p>Instalaciones y Actividades:</p>
                 </b>
                 <p><?php echo $arr[4]; ?></p>
-                <iframe src=<?php $arr[5]?> width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 <div class="">
                     <div id="map" style="width: 100%; height: 400px;"></div>
                     <script src="https://cdn.jsdelivr.net/npm/ol@v10.2.1/dist/ol.js"></script>
@@ -258,10 +260,11 @@ $arr = mysqli_fetch_array($sql);
                     <input type="submit" class="btn btn-success" name="subComm" value="Enviar comentario">
                 </form>
                 <br><br>
-
+                <button id="alter" class="btn btn-warning" onclick="alternarDivs()">Ver Partidas</button>
+                <br><br>
+                
+                <div id="coments" class="row" style="border-width: 2px; border-color: black;">
                 <p> Comentarios:</p><br>
-                <div class="row" style="border-width: 2px; border-color: black;">
-                    
                     <?php while ($row = $sql2->fetch_assoc()) {
                         if ($row['imagen'] != NULL) {
                             $ruta = $row['imagen'];
@@ -282,10 +285,41 @@ $arr = mysqli_fetch_array($sql);
                         </div>
                     <?php } ?>
                 </div>
+                <div id="partidas" class="row" style="border-width: 2px; border-color: black;">
+                <a  href=<?php echo "'registropartida.php?id=".$idDepor."'" ?>><button id="add" class="btn btn-danger">Agregar Partida</button></a>
+                <br><br>
+                <p> Partidas:</p><br>
+                    <?php while ($row = mysqli_fetch_array($sql3)) {
+                        ?>                        
+                        <div class="col-sm-10">
+                            <h5><b><?php echo $row['nombrePartida']." "; ?></b></h5>
+                            <p><?php echo $row['lugarPartida']; ?></p>
+                            <br>
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div><br>
 </body>
+<script>
+        // Función JavaScript para alternar los divs
+        function alternarDivs() {
+            var div1 = document.getElementById('coments');
+            var div2 = document.getElementById('partidas');
+            var btn = document.getElementById('alter')
+            var lab = document.getElementById('label');
+            if (div1.style.display === 'none') {
+                div1.style.display = 'flex';
+                div2.style.display = 'none';
+                btn.textContent = "Ver Partidas";
+            } else {
+                div1.style.display = 'none';
+                div2.style.display = 'flex';
+                btn.textContent = "Ver Comentarios";
+            }
+        }
+    </script>
 
 </html>
 <?php

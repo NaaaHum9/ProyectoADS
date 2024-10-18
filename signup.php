@@ -95,7 +95,8 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 
 </html>
 <?php
-
+    
+    if(!empty($_POST["subBuscr"])) {
     if(isset($_POST["sign"])){
         $nombre= $_POST["nombre"];
         $email= $_POST["email"];
@@ -110,6 +111,6 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 
         exit();
 
-    }
+    }}
 
 ?>
