@@ -7,12 +7,22 @@ CREATE TABLE usuario (
     imagen VARCHAR(255),
     nombreUsuario VARCHAR(255),
     alcaldia TEXT NOT NULL,
-    partidas VARCHAR(255),
-    deporte VARCHAR(255),
-    cursos VARCHAR(255),
-    clubOrganizacion VARCHAR(255),
-    amigos VARCHAR(255),
+    -- partidas VARCHAR(255),-- Otra tabla
+   --  deporte VARCHAR(255),-- -- Otra tabla
+    -- cursos VARCHAR(255),-- Otra tabla
+    clubOrganizacion VARCHAR(255),-- Otra tabla
+    -- amigos VARCHAR(255),-- Otra tabla
     reputacion DECIMAL(3, 1) NOT NULL
+);
+
+
+
+CREATE TABLE amigo(
+    idAmigo INT AUTO_INCREMENT PRIMARY KEY,
+    idAmigo1 INT NOT NULL,
+    idAmigo2 INT NOT NULL,
+    FOREIGN KEY (idAmigo1) REFERENCES usuario(idUsuario),
+    FOREIGN KEY (idAmigo2) REFERENCES usuario(idUsuario)
 );
 
 CREATE TABLE comentUsuario ( 
@@ -49,20 +59,27 @@ CREATE TABLE deportivo (
     oferta text not null,
     mapa text not null,
     imagen TEXT,
-    imagenSecundarias TEXT,
+    -- imagenSecundarias TEXT,-- Otra tabla
     fechaRegistro DATETIME,
     tipoEspacio VARCHAR(100) NOT NULL,
-    banosCantidad INT,
-    banosStatus VARCHAR(100),
-    banosTipo VARCHAR(100),
-    comercios TEXT,
+    banosCantidad INT,-- Otra tabla
+    banosStatus VARCHAR(100),-- Otra tabla -- Las 3 juntas
+    banosTipo VARCHAR(100),-- Otra tabla
+    -- comercios TEXT,-- Otra tabla
     vigilaciaCantidad INT,
     vigilanciaStatus VARCHAR(100),
     vigilanciaTipo VARCHAR(100),
-    puertasEntradas INT,
+    puertasEntradas INT,-- Otra tabla
     aceptaMascotas BOOLEAN,
     costo DECIMAL(10, 2),
     calificacion DECIMAL(1, 1) not null
+);
+
+CREATE TABLE imgSecundarias(
+    idImgSec INT PRIMARY KEY AUTO_INCREMENT,
+    ruta VARCHAR(255),
+    idDeportivo INT NOT NULL,
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
 );
 
 CREATE TABLE calificacion ( 
@@ -84,14 +101,7 @@ CREATE TABLE comentDeportivo (
     FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
     );
 
-CREATE TABLE imgDepor (
-    idImgDepor INT auto_increment PRIMARY KEY,
-    ruta VARCHAR(255),
-    idDeportivo int not null,
-    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
-    );
-
-CREATE TABLE canchas(
+CREATE TABLE cancha(
     idCancha INT auto_increment PRIMARY KEY,
     etiqueta varchar(100), /*puede ser una letra con un numero CF1*/
     deporteCancha VARCHAR(100),
@@ -117,24 +127,28 @@ CREATE TABLE canchas(
     vestidoresCanchaCantidad INT,
     ubicacionPoligono VARCHAR(255),
     direccionEnDeportivo VARCHAR(255),
-    horarioCancha VARCHAR(100)
+    horarioCancha VARCHAR(100),
+    idDeportivo int not null,
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
 );
 
-CREATE TABLE negocios(
+CREATE TABLE negocio(
     idNegocio INT auto_increment PRIMARY KEY, 
     nombreNegocio VARCHAR(100),
     duenoNegocio VARCHAR(100),
     serviciosNegocio VARCHAR(100),
-    productosNegocio VARCHAR(100),
+    productosNegocio VARCHAR(100),-- Otra tabla
     horarioNegocio VARCHAR(100)
     tipoNegocio VARCHAR(255),
     ubicacionNegocio VARCHAR(100),
     descripcionNegocio VARCHAR(255),
-    imagenesNegocio VARCHAR(255)
+    imagenesNegocio VARCHAR(255),-- Otra tabla
+    idDeportivo int not null,
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
     
 );
 
-CREATE TABLE partidas(
+CREATE TABLE partida(
     idPartida INT auto_increment PRIMARY KEY,
     nombrePartida VARCHAR(255), 
     lugarPartida VARCHAR(255),
@@ -148,28 +162,51 @@ CREATE TABLE partidas(
     horaReunion TIME,
     transporte VARCHAR(255),
     indicacionesExtra TEXT,
-    unifromes VARCHAR(255)
+    uniformes VARCHAR(255),
+    idDeportivo int not null,
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
+    idUsuario int not null,
+    FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
 );
 
-CREATE TABLE torneos(
+CREATE TABLE participante(
+    idParti int auto_increment PRIMARY KEY,
+    idPartida INT NOT NULL,
+    idUsuario INT NOT NULL,
+)
+
+CREATE TABLE torneo(
     idTorneo INT auto_increment PRIMARY KEY,
     nombreTorneo VARCHAR(255) NOT NULL,
     objetivoTorneo TEXT,
     descripcionTorneo TEXT,
     modalidadTorneo VARCHAR(100),
-    fechasProgramadas DATE,
+    fechasProgramadas DATE,-- Otra tabla
     numeroHoras INT,
     precio DECIMAL(10, 2),
     ligaInscripciones VARCHAR(255),
     calificacionesTorneo DECIMAL(3,2),
-    comentariosTorneo TEXT,
+    -- comentariosTorneo TEXT,-- Otra tabla
     ubicacionTorneo VARCHAR(255),
     premiosTorneo VARCHAR(255),
     empresaPatrocinadora VARCHAR(255),
     prerequisitos TEXT,
     materialEquipamineto TEXT,
-    nivelExperiencia VARCHAR(100)
+    nivelExperiencia VARCHAR(100),
+    idDeportivo int not null,
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
 );
+
+CREATE TABLE comentTorneo ( 
+    idComentTorneo INT auto_increment PRIMARY KEY,
+    autor int not null,
+    contenido text not null,
+    fecha date not null,
+    idTorneo int not null,
+    FOREIGN KEY (autor) REFERENCES usuario(idUsuario),
+    FOREIGN KEY (idTorneo) REFERENCES torneo(idTorneo)
+);
+
 
 CREATE TABLE cursos(
     idCurso int auto_increment PRIMARY KEY,
@@ -182,14 +219,27 @@ CREATE TABLE cursos(
     precio DECIMAL(10, 2),
     ligaInscripciones VARCHAR(255),
     calificaciones DECIMAL(3,2),
-    comentariosCursos TEXT,
+    -- comentariosCursos TEXT,
     ubicacionCurso VARCHAR(255),
     tipoReconocimiento VARCHAR(255),
     empresaPatrocinadora VARCHAR(255),
     prerequisitos TEXT,
     materialEquipamineto TEXT,
-    nivelExperiencia VARCHAR(100)
+    nivelExperiencia VARCHAR(100),
+    idDeportivo int not null,
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
+    idUsuario int not null,
+    FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
+);
 
+CREATE TABLE comentCurso ( 
+    idComentCurso INT auto_increment PRIMARY KEY,
+    autor int not null,
+    contenido text not null,
+    fecha date not null,
+    idCurso int not null,
+    FOREIGN KEY (autor) REFERENCES usuario(idUsuario),
+    FOREIGN KEY (idCurso) REFERENCES curso(idCurso)
 );
 
 DELIMITER $$
@@ -199,10 +249,10 @@ FOR EACH ROW
 BEGIN
     DECLARE nuevo_promedio DECIMAL(10, 2);
 
-    -- Calcular el promedio de todos los valores en la tabla 'valores'
+    
     SELECT AVG(calificacion) INTO nuevo_promedio FROM calificacion where idDeportivo=NEW.idDeportivo;
 
-    -- Actualizar el promedio en la tabla 'promedios'
+    
     UPDATE deportivo SET calificacion = nuevo_promedio WHERE id = NEW.idDeportivo;
 END;
 
@@ -212,9 +262,9 @@ FOR EACH ROW
 BEGIN
     DECLARE nuevopromedio DECIMAL(10, 2);
 
-    -- Calcular el promedio de todos los valores en la tabla 'valores'
+    
     SELECT AVG(reputacion) INTO nuevopromedio FROM reputacion where calificado= NEW.calificado;
 
-    -- Actualizar el promedio en la tabla 'promedios'
+    
     UPDATE deportivo SET reputacion = nuevopromedio WHERE calificado= NEW.calificado;
 END;$$

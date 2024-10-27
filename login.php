@@ -2,7 +2,7 @@
 $servidor = "localhost";
 $usuario = "root";
 $clave = "root";
-$baseDeDatos = "aprovDep";
+$baseDeDatos = "test";
 session_start();
 $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 ?>
