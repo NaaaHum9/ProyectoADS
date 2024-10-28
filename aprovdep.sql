@@ -215,6 +215,42 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
+CREATE TABLE `negocio` (
+  `idNegocio` int NOT NULL AUTO_INCREMENT,
+  `nombre` text NOT NULL,
+  `dueno` int NOT NULL,
+  `servicios` text NOT NULL,
+  `productos` text NOT NULL,
+  `horario` text NOT NULL,
+  `tipo` varchar(100) NOT NULL,
+  `ubicacion` text NOT NULL,
+  `descripcion` text NOT NULL,
+  `mapa` text,
+  PRIMARY KEY (`idNegocio`),
+  KEY `dueno` (`dueno`),
+  CONSTRAINT `negocio_ibfk_1` FOREIGN KEY (`dueno`) REFERENCES `usuario` (`idUsuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Crear tabla para las fotos del negocio (similar a imgdepor)
+CREATE TABLE `imgnegocio` (
+  `idImgNegocio` int NOT NULL AUTO_INCREMENT,
+  `ruta` varchar(255) DEFAULT NULL,
+  `idNegocio` int NOT NULL,
+  PRIMARY KEY (`idImgNegocio`),
+  KEY `idNegocio` (`idNegocio`),
+  CONSTRAINT `imgnegocio_ibfk_1` FOREIGN KEY (`idNegocio`) REFERENCES `negocio` (`idNegocio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+
+CREATE TABLE negocio_deportivo (
+    idNegocioDeportivo INT NOT NULL AUTO_INCREMENT,
+    idNegocio INT NOT NULL,
+    idDeportivo INT NOT NULL,
+    PRIMARY KEY (idNegocioDeportivo),
+    UNIQUE KEY unique_negocio_deportivo (idNegocio, idDeportivo),
+    FOREIGN KEY (idNegocio) REFERENCES negocio(idNegocio),
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `correo`, `pass`, `imagen`, `reputacion`) VALUES
 (1, 'root', 'root@root', 'root', 'img/metallica.jpeg', 5.0),
 (2, 'Paki', 'christopherpaki.nunezr@hotmail.com', '123', 'img/2.jpeg', 0.0);
