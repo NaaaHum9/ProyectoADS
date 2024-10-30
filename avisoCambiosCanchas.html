@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <header>
+        <h2>AVISO</h2>
+    </header>
+    <main>
+        <div class="container">
+            <h2>Desea hacer cambios en la cancha: </h3><!--Nombre e itequeta de la cancha-->
+            <div class="button-container">
+                <button class="button-si">Si</button>
+                <button class="button-no">No</button>
+            </div>
+
+        </div>
+    </main>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            background-color: #D9D9D9;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        h2 {
+            padding: 15px;
+            margin: 100px;
+            text-align: center;
+            background-color: white;
+            border-radius: 10px;
+        }
+
+        .container{
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 100px;
+            margin-left: 200px;
+            margin-right: 200px;
+            border-radius: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 100px; /* Más espacio entre los botones */
+            margin-bottom: 90px; /* Eleva la posición de los botones */
+            background-color: white;
+        }
+
+        .button-si{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            width: 150px;
+            background-color: #D9D9D9;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .button-no{
+            padding: 30px;
+            width: 150px;
+            background-color: #D9D9D9;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+        }
+    </style>
+</body>
+</html>
