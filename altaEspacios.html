@@ -191,7 +191,7 @@
             </form>
 
             <div class="div-boton-resgistro">
-                <button class="boton-registro">Dar de alta</button>
+                <button class="boton-registro" onclick="alertaAlta()">Dar de alta</button>
             </div>
         </section>
     </main>
@@ -387,6 +387,10 @@
                 tiposContainer.appendChild(tiposDiv);
                 tiposContainer.appendChild(document.createElement('br'));
             }
+        }
+
+        function alertaAlta(){
+            alert("El espacio de alta se dio de alta correctamente");
         }
     </script>
 </body>
