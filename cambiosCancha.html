@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambios Canchas</title>
+</head>
+<body>
+    <header></header>
+    <nav>
+        <div class="buscador"><form method="get" id="buscarform">
+            <fieldset>
+                <input type="text" id="" value="" placeholder="Buscar">
+                <button>Click</button>
+                <i class="search"></i>
+            </fieldset>
+        </form></div>
+        
+        <div class="perfil-usuario">
+            <img src="" alt="">
+        </div>
+
+        <div class="botones-container">
+            <button class="boton">Inicio</button>
+            <button class="boton">Espacios</button>
+            <button class="boton">Partida</button>
+            <button class="boton">Reporte</button>
+        </div>
+    </nav>
+
+    <main>
+        <section>
+            <h3 id="titulo">Cambios en la cancha: Nombre Etiqueta</h3>
+            <form action="" id="cambios-cancha">
+                <ul>
+                    <li>
+                        <label for="nombre-cancha">Nombre de la cancha</label>
+                        <input type="text" name="nombre-cancha" id="nombre-cancha">
+                    </li>
+                    <li>
+                        <label for="etiqueta-cancha">Etiqueta de la cancha</label>
+                        <input type="text" name="etiqueta-cancha" id="etiqueta-cancha">
+                    </li>
+                    <li>
+                        <label for="imagen-cancha">Imagen de la cancha</label>
+                        <input type="file" name="imagen-cancha" id="imagen-cancha" accept="image/">
+                    </li>
+                    <li>
+                        <label for="fecha-registro-cancha">fecha de registro</label>
+                        <input type="date" name="fecha-registro-cancha" id="fecha-registro-cancha">
+                    </li>
+                    <li>
+                        <label for="deportes-cancha">Deporte que se realiza en la cancha</label>
+                        <select name="deportes-cancha[]" id="deportes-cancha" multiple>
+                            <option value="Fútbol">Fútbol</option>
+                            <option value="Natación">Natación</option>
+                            <option value="Atletismo">Atletismo</option>
+                            <option value="Voleibol">Voleibol</option>
+                            <option value="Baloncesto">Baloncesto</option>
+                            <option value="Tenis">Tenis</option>
+                            <option value="Fútbol Americano">Fútbol Americano</option>
+                            <option value="Gimnasio">Gimnasio</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </li>
+                    <li>
+                        <h3>Ingrese las medidas de la cancha</h3>
+                        <div class="div-medidas">
+                            <label for="medidas-ancho">Ancho</label>
+                            <input type="text" name="medidas-ancho" id="medidas-ancho">
+                            <label for="medidas-largo">Largo</label>
+                            <input type="text" name="medidas-largo" id="medidas-largo">
+                            <label for="medidas-profundidad">Profundidad</label>
+                            <input type="text" name="medidas-profundidad" id="medidas-profundidad">
+                        </div>
+                    </li>
+                    <li>
+                        <label for="suelo-cancha">Tipo de suelo</label>
+                        <input type="text" name="suelo-cancha" id="suelo-cancha" list="suelo-tipos">
+                        <datalist id="suelo-tipos">
+                            <option value="Caucho"></option>
+                            <option value="Madera"></option>
+                            <option value="Vinilo"></option>
+                            <option value="Resina"></option>
+                            <option value="Cesped artificial"></option>
+                            <option value="Concreto"></option>
+                        </datalist>
+                    </li>
+                    <li>
+                        <label for="senalamientos-cancha">Señalamientos en la cancha</label>
+                        <input type="text" name="senalamientos-cancha" id="senalamientos-cancha">
+                    </li>
+                    <li>
+                        <label for="equipamiento-cancha"></label>
+                        <input type="text" name="equipamiento-cancha" id="equipamiento-cancha">
+                    </li>
+                    <li>
+                        <label for="iluminacion-cancha">Iluminacion</label>
+                        <label for=""><input type="checkbox" name="iluminacion" id="iluminacion-si">Si</label>
+                        <label for=""><input type="checkbox" name="iluminacion" id="iluminacion-no">No</label>
+                    </li>
+                    <li>
+                        <label for="status-iluminacion">Estado de la ilumunacion</label>
+                        <input type="text" name="status-iluminacion" id="status-iluminacion" list="estado-opciones">
+                        <datalist id="estado-opciones">
+                            <option value="En reparacion"></option>
+                            <option value="Funcional"></option>
+                        </datalist>
+                    </li>
+                    <li>
+                        <label for=""></label>
+                    </li>
+                </ul>
+            </form>
+        </section>
+    </main>
+
+    <footer></footer>
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        /* Estilos generales */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    
+        /* Navegación */
+        nav {
+            background-color: #D9D9D9;
+        }
+
+        #titulo{
+            border: 2px solid;
+            padding: 15px;
+            margin: 150px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            text-align: center;
+            background-color: #D9D9D9;
+        }
+    
+        /* Contenedor de botones */
+        .botones-container {
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+        }
+    
+        .boton {
+            padding: 5px 20px;
+            cursor: pointer;
+        }
+    
+        /* Título */
+        #cambios-cancha{
+            display: flex;
+            justify-content: center;
+            font-size: 19px;
+            margin-top: 50px;
+        }
+    
+        /* Formulario */
+        form {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9);
+        }
+
+    
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+    
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+    
+        /* Etiquetas */
+        form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+    
+        /* Contenedor de vigilancia */
+        .div-vigilancia {
+            display: flex;
+            flex-direction: column;
+            margin-top: 8px;
+        }
+        
+        .div-vigilancia label {
+            margin-bottom: 5px;
+        }
+    
+        /* Contenedor del botón de registro */
+        .div-boton-resgistro {
+            padding-top: 50px;
+            display: flex;
+            justify-content: center;
+        }
+    
+        .boton-registro {
+            font-size: 22px;
+            padding: 10px 40px;
+            cursor: pointer;
+        }
+    </style>
+</body>
+</html>
