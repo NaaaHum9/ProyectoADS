@@ -221,8 +221,8 @@ if (isset($_POST["sign"])) {
     $deporte = $_POST["deporte"];
     $club = $_POST["club"];
 
-    $insertarRegistro = "INSERT INTO usuario (nombre,apellidos,correo,pass,nombreUsuario,alcaldia,clubOrganizacion,reputacion,imagen) 
-        VALUES('$nombre','$apell','$email','$pass','$user','$alcaldia','$club',0,'img/default.jpg')";
+    $insertarRegistro = "INSERT INTO usuario (nombre,apellidos,correo,pass,nombreUsuario,alcaldia,clubOrganizacion,reputacion,imagen,tipoUsuario) 
+        VALUES('$nombre','$apell','$email','$pass','$user','$alcaldia','$club',0,'img/default.jpg',2)";
 
     $ejecutarRegistro = mysqli_query($enlace, $insertarRegistro);
 

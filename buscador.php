@@ -1,15 +1,10 @@
 <?php
+include 'php/connection.php';
+include 'php/buscadorBack.php';
+$enlace = conexion();
 session_start();
 
-
-$servidor = "localhost";
-$usuario = "root";
-$clave = "root";
-$baseDeDatos = "test";
-
-$enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
-
-$consulta = "SELECT *,imgDepor.ruta from deportivo INNER JOIN imgDepor on imgDepor.idDeportivo=deportivo.idDeportivo ";
+$consulta = "SELECT * from deportivo ";
 $resultado = mysqli_query($enlace, $consulta);
 
 ?>
@@ -21,22 +16,16 @@ $resultado = mysqli_query($enlace, $consulta);
     <title>
         Aprovechamiento de Espacios Deportivos
     </title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <!--Datatable plugin CSS file -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+    <link href="libraries/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="libraries/js/jquery.min.js"></script>
 
-    <!--jQuery library file -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js">
-    </script>
+    <!--Datatable plugin CSS file -->
+    <link rel="stylesheet" href="libraries/css/jquery.dataTables.min.css" />
 
     <!--Datatable plugin JS library file -->
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js">
+    <script type="text/javascript" src="libraries/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="libraries/js/buscadorBack.js">
     </script>
     <style>
         body {
@@ -107,7 +96,7 @@ $resultado = mysqli_query($enlace, $consulta);
         }
 
         #resultados {
-            width: 80%;
+            width: 100%;
             margin: auto;
             display: grid;
             grid-template-columns: repeat(1, 1fr);
@@ -120,8 +109,7 @@ $resultado = mysqli_query($enlace, $consulta);
             border-radius: 15px;
             padding: 10px;
         }
-    </style>
-    <style>
+
         .search-result-categories>li>a {
             color: #b6b6b6;
             font-weight: 400
@@ -240,13 +228,7 @@ $resultado = mysqli_query($enlace, $consulta);
         <a class="navButton" href="#">Deportivos</a>
         <a class="navButton" disabled href="#"></a>
         <?php
-        if ($_SESSION != NULL) {
-            echo "<a class='navButton' href='perfil.php?myFlag'>Mi Cuenta</a><br>";
-            echo "<a class='navButton' href='logout.php'>Cerrar Sesión</a>";
-        } else {
-            echo "<a class='navButton' href='login.php'>Inicio Sesión</a><br>";
-            echo "<a class='navButton' href='signup.php'>Registrar</a>";
-        }
+        validarNavBar($_SESSION);
         ?>
 
     </nav>
@@ -261,67 +243,33 @@ $resultado = mysqli_query($enlace, $consulta);
     </div>
 
     <div id="resultados" class="tabla">
-        <form name="filtro" action="#" method="post" class="form-inline">
+        <form name="filtro" method="post" class="form-inline">
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input class="btn-check" type="radio" name="filtro" id="default" value="" onclick="showDiv(0)" checked>
+                <label class="btn btn-outline-primary" for="default">Sin Filtro</label>
+
+                <input type="radio" class="btn-check" name="filtro" id="radAlcaldia" value="alcaldia"
+                    onclick="showDiv(1)">
+                <label class="btn btn-outline-primary" for="radAlcaldia">Alcaldía</label>
+
+                <input type="radio" class="btn-check" name="filtro" id="radDeporte" value="deporte"
+                    onclick="showDiv(2)">
+                <label class="btn btn-outline-primary" for="radDeporte">Deporte</label>
+
+                <input type="radio" class="btn-check" name="filtro" id="radCosto" value="costo" onclick="showDiv(3)">
+                <label class="btn btn-outline-primary" for="radCosto">Costo</label>
+
+                <input type="radio" class="btn-check" name="filtro" id="radGradas" value="gradas" onclick="showDiv(4)">
+                <label class="btn btn-outline-primary" for="radGradas">Gradas</label>
+
+                <input type="radio" class="btn-check" name="filtro" id="radMascotas" value="mascota"
+                    onclick="showDiv(5)">
+                <label class="btn btn-outline-primary" for="radMascotas">Mascotas</label>
+
+                <input type="submit" name="subBuscr" value="Filtrar" class="btn btn-primary">
+            </div>
             <table>
-                <tr>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="filtro" id="default" value="no" onclick="showDiv(0)"
-                                checked>
-                            <label class="form-check-label" for="default">
-                                Sin Filtro
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="filtro" id="radAlcaldia" value="alcaldia"
-                                onclick="showDiv(1)">
-                            <label class="form-check-label" for="radAlcaldia">
-                                Alcaldía
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="filtro" id="radDeporte" value="deporte"
-                                onclick="showDiv(2)">
-                            <label class="form-check-label" for="radDeporte">
-                                Deportes
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="filtro" id="radCosto" value="costo"
-                                onclick="showDiv(3)">
-                            <label class="form-check-label" for="radCosto">
-                                Costo
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="filtro" id="radGradas" value="gradas"
-                                onclick="showDiv(4)">
-                            <label class="form-check-label" for="radGradas">
-                                Gradas
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="filtro" id="radMascotas" value="mascota"
-                                onclick="showDiv(5)">
-                            <label class="form-check-label" for="radMascotas">
-                                Acepta Mascotas
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <input type="submit" name="subBuscr" value="Filtrar" class="btn btn-primary">
-                    </td>
-                </tr>
+
                 <tr>
                     <td colspan="7">
                         <div class="filter">
@@ -384,115 +332,39 @@ $resultado = mysqli_query($enlace, $consulta);
                 </tr>
             </table>
         </form>
+        <?php
+        if (!empty($_SESSION)) {
+        if ($_SESSION['tipo'] == 0) {
+            echo '<div class="d-grid gap-2">
+            <a class="btn btn-success" href="altaEspacios.php" >Agregar un espacio</a>
+            </div>';
+        }}
+        ?>
 
-
-        <div class="container">
-            <table id="" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Foto</th>
-                        <th>Nombre</th>
-                        <th>Calificación</th>
-                        <th>Oferta</th>
-                    </tr>
-                </thead>
-                <tbody>
-
+        <table id="" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Nombre</th>
+                    <th>Costo</th>
+                    <th>Calificación</th>
+                    <th>Oferta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
                     <?php
-
-                    buscar($consulta, $enlace); ?><?php
-                      function buscar($consulta, $enlace)
-                      {
-                          if (!empty($_POST["subBuscr"])) {
-
-                              if (isset($_POST['filtro'])) {
-                                  // Obtener el valor del radio button seleccionado
-                                  $filtroSeleccionado = $_POST['filtro'];
-                                  
-                              }
-                              if($filtroSeleccionado=="alcaldia"){
-                                $busqueda=$_POST["alcaldia"];
-                                $filtro = " WHERE direccion like '%" . $busqueda . "%'";
-                                $consulta=$consulta.$filtro;
-                              }
-                              if($filtroSeleccionado=="deporte"){
-                                $busqueda=$_POST["deporte"];
-                                $consulta = "SELECT *, imgDepor.ruta FROM deportivo 
-                                INNER JOIN imgDepor ON imgDepor.idDeportivo = deportivo.idDeportivo 
-                                INNER JOIN cancha ON cancha.idDeportivo = deportivo.idDeportivo 
-                                WHERE cancha.deporteCancha = '$busqueda'";
-                              }
-                              if($filtroSeleccionado=="gradas"){
-                                $busqueda=$_POST["gradas"];
-                                if ($busqueda=="Con gradas"){
-                                    $consulta = "SELECT *, imgDepor.ruta FROM deportivo 
-                                INNER JOIN imgDepor ON imgDepor.idDeportivo = deportivo.idDeportivo 
-                                INNER JOIN cancha ON cancha.idDeportivo = deportivo.idDeportivo 
-                                WHERE cancha.gradasCanchaCantidad = 0";
-                                }else{
-                                    $consulta = "SELECT *, imgDepor.ruta FROM deportivo 
-                                INNER JOIN imgDepor ON imgDepor.idDeportivo = deportivo.idDeportivo 
-                                INNER JOIN cancha ON cancha.idDeportivo = deportivo.idDeportivo 
-                                WHERE cancha.gradasCanchaCantidad > 0";
-                                }
-                                
-
-                              }
-                              if($filtroSeleccionado=="costo"){
-                                $busqueda=$_POST["costo"];
-                                if ($busqueda=="Gratuito"){
-                                    $filtro = " WHERE costo is NULL";
-                                }else{
-                                    $filtro = " WHERE costo is NOT NULL";
-                                }
-                                $consulta = $consulta.$filtro;
-                                
-                              }
-                              if($filtroSeleccionado=="mascota"){
-                                $busqueda=$_POST["mascota"];
-                                if ($busqueda=="Pet"){
-                                    $filtro = " WHERE aceptaMascotas = 1";
-                                }else{
-                                    $filtro = " WHERE aceptaMascotas = 0";
-                                }
-                                $consulta=$consulta.$filtro;
-                                
-                              }
-
-                            /*$busqueda = (isset($_POST["consulta"])) ? $_POST["consulta"] : "";*/
+                    if (!empty($_POST["subBuscr"])) {
 
 
-                              
-                          }
-
-                          $resultado = mysqli_query($enlace, $consulta);
-                          while ($row = mysqli_fetch_array($resultado)) {
-                              $id = $row['idDeportivo']; ?>
-
-                            <tr>
-                                <td class="imagen">
-                                    <a class="image-link" href=<?php echo '"deportivo.php?id=' . $row['idDeportivo'] . '"' ?>>
-                                        <img class="image img-thumbnail" src=<?php echo '"' . $row['ruta'] . '"' ?>>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href=<?php echo '"deportivo.php?id=' . $row['idDeportivo'] . '"' ?>><?php echo $row['nombre'] ?></a>
-                                </td>
-                                <td>
-                                    <?php echo $row['calificacion'] ?>
-                                </td>
-                                <td>
-                                    <?php echo $row['oferta'] ?>
-                                </td>
-                            </tr>
-
-
-                        <?php }
-                      } ?>
-
-                </tbody>
-            </table>
-        </div>
+                        buscar($consulta, $enlace, $_POST);
+                    } else {
+                        buscar($consulta, $enlace, NULL);
+                    }
+                    ?>
+                </tr>
+            </tbody>
+        </table>
         <script>
             /* Initialization of datatables */
             $(document).ready(function () {
@@ -500,29 +372,12 @@ $resultado = mysqli_query($enlace, $consulta);
             });
         </script>
         <script>
-            function showDiv(val) {
-                // Primero ocultamos todos los divs
-                document.getElementById('alcaldia').style.display = 'none';
-                document.getElementById('deporte').style.display = 'none';
-                document.getElementById('costo').style.display = 'none';
-                document.getElementById('gradas').style.display = 'none';
-                document.getElementById('mascota').style.display = 'none';
-
-                // Mostramos solo el div correspondiente
-                if (val == 1) {
-                    document.getElementById('alcaldia').style.display = 'inline-block';
-                } else if (val == 2) {
-                    document.getElementById('deporte').style.display = 'inline-block';
-                } else if (val == 3) {
-                    document.getElementById('costo').style.display = 'inline-block';
-                } else if (val == 4) {
-                    document.getElementById('gradas').style.display = 'inline-block';
-                } else if (val == 5) {
-                    document.getElementById('mascota').style.display = 'inline-block';
-                }
-            }
             showDiv(0);
         </script>
 </body>
+<script></script>
+<?php
+
+?>
 
 </html>

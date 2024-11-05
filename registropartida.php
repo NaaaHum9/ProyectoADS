@@ -1,9 +1,13 @@
 <?php
-$servidor = "localhost";
-$usuario = "root";
-$clave = "root";
-$baseDeDatos = "test";
-$enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
+include 'php/connection.php';
+include 'php/buscadorBack.php';
+$enlace = conexion();
+session_start();
+$idDepor = $_GET['id'];
+$consulta = "SELECT * FROM deportivo where idDeportivo=" . $idDepor;
+$query = mysqli_query($enlace, $consulta);
+$depor = mysqli_fetch_array($query);
+
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +25,7 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
     </header>
     <nav>
         <div class="buscador">
-            <form method="get" id="buscarform">
+            <form  id="buscarform">
                 <fieldset>
                     <input type="text" id="" value="" placeholder="Buscar">
                     <button>Click</button>
@@ -45,38 +49,49 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
     <main>
         <section>
             <div>
-                <h3>Ingrese la información de su Partida</h3>
+                <h3>Agregando Partida en <?php echo $depor[1]; ?></h3>
             </div>
-            <form action="#" id="resgistro-usuario">
+            <form action="#" method="post" id="resgistro-usuario">
                 <ul>
                     <li>
                         <label for="nombre">Nombre:</label>
-                        <input type="text" name="nombre" id="nombre" />
+                        <input type="text" name="nombre" id="nombre"  />
                     </li>
                     <li>
                         <label for="descripcion">Descripción:</label>
-                        <input type="text" name="descripcion" id="descripcion" />
+                        <input type="text" name="descripcion" id="descripcion"  />
                     </li>
                     <li>
                         <table>
                             <tr>
                                 <td>
-                                    <label for="lugar">Lugar:</label>
-                                    <input type="text" name="lugar" id="lugar" />
-                                </td>
-                                <td>
-                                    <label for="fecha">Fecha:</label>
-                                    <input type="date" name="fecha" id="fecha" />
-                                </td>
-                            </tr>
-                        </table>
+                    <li>
+                        <label for="cancha">Cancha:</label>
+                        <select name="cancha" id="cancha">
+                            <?php
+                            $cons = "SELECT * FROM cancha WHERE idDeportivo=" . $idDepor;
+                            $res = mysqli_query($enlace, $cons);
+                            while ($fila = mysqli_fetch_assoc($res)) {
+                                // Acceder a cada valor
+                                echo "<option value=" . $fila['idCancha'] . ">" . $fila['etiqueta'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </li>
+                    </td>
+                    <td>
+                        <label for="fecha">Fecha:</label>
+                        <input type="date" name="fecha" id="fecha"  />
+                    </td>
+                    </tr>
+                    </table>
                     </li>
                     <li>
                         <table>
                             <tr>
                                 <td>
                                     <label for="duracion">Duración:</label>
-                                    <input type="time" name="duracion" id="duracion"><b></b>
+                                    <input type="number" name="duracion" id="duracion">min.
                                 </td>
                                 <td>
                                     <label for="hora">Hora de reunión:</label>
@@ -89,42 +104,48 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
                         <table>
                             <tr>
                                 <td>
-                                    <label for="deporte">Deporte:</label>
-                                    <input type="text" name="deporte" id="deporte" list="lista-deportes" />
-                                    <datalist id="lista-deportes">
-                                        <option value="Fútbol"></option>
-                                        <option value="Natacion"></option>
-                                        <option value="Atletismo"></option>
-                                        <option value="Voleibol"></option>
-                                        <option value="Baloncesto"></option>
-                                        <option value="Tenis"></option>
-                                        <option value="Fútbol Americano"></option>
-                                        <option value="Gimnasio"></option>
-                                        <option value="Otro"></option>
-                                    </datalist>
-                                </td>
-                                <td>
-                                    <label for="deporte">Uniforme requerido:</label>
-                                    <input type="text" name="uniforme" id="uniforme" />
-                                </td>
-                            </tr>
-                        </table>
-                    </li>
-                    
                     <li>
-
+                        <label for="ubicacion">Deporte:</label>
+                        <select name="deporte" id="deporte">
+                            <option value="Fútbol">Fútbol</option>
+                            <option value="Natacion">Natacion</option>
+                            <option value="Atletismo">Atletismo</option>
+                            <option value="Voleibol">Voleibol</option>
+                            <option value="Baloncesto">Baloncesto</option>
+                            <option value="Tenis">Tenis</option>
+                            <option value="Fútbol Americano">Fútbol Americano</option>
+                            <option value="Gimnasio">Gimnasio</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </li>
+                    </td>
+                    <td>
+                        <label for="deporte">Uniforme requerido:</label>
+                        <input type="text" name="uniforme" id="uniforme" />
+                    </td>
+                    </tr>
+                    </table>
                     </li>
                     <li>
                         <label for="empresa">Empresa que lo realiza:</label>
                         <input type="text" name="empresa" id="empresa" />
                     </li>
                     <li>
-                        <label for="empresa">Público Dirigido:</label>
-                        <input type="text" name="publico" id="publico" />
+                        <label for="ubicacion">Público dirigido:</label>
+                        <select name="publico" id="publico">
+                            <option value="todos">Todos</option>
+                            <option value="amigos">Sólo amigos</option>
+                            <option value="club">Sólo club</option>
+                        </select>
                     </li>
                     <li>
-                        <label for="empresa">Nivel de experiencia:</label>
-                        <input type="text" name="experiencia" id="experiencia" />
+                        <label for="experiencia">Nivel de experiencia:</label>
+                        <select name="experiencia" id="experiencia">
+                        <option value="Sin experiencia necesaria">Sin experiencia necesaria</option>
+                            <option value="principante">Principiante</option>
+                            <option value="intermedio">Intermedio</option>
+                            <option value="avanzado">Avanzado</option>
+                        </select>
                     </li>
                     <li>
                         <label for="extra">Indicaciones extra</label>
@@ -132,11 +153,11 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
                     </li>
                     <li>
                         <div class="div-boton-resgistro">
-                                <input type="submit" name="sign" value="Subir Partida">
-                            </div>
+                            <input type="submit" name="sign" value="Subir Partida">
+                        </div>
                     </li>
                 </ul>
-                
+
             </form>
         </section>
     </main>
@@ -225,7 +246,7 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 if (isset($_POST["sign"])) {
     $nombre = $_POST["nombre"];
     $desc = $_POST["descripcion"];
-    $lugar = $_POST["lugar"];
+    $lugar = $_POST["cancha"];
     $fecha = $_POST["fecha"];
     $duracion = $_POST["duracion"];
     $hora = $_POST["hora"];
@@ -235,15 +256,14 @@ if (isset($_POST["sign"])) {
     $publico = $_POST["publico"];
     $experiencia = $_POST["experiencia"];
     $extra = $_POST["extra"];
-
-    $insertarRegistro = "INSERT INTO usuario (nombrePartida,descrpicionPartida,lugarPartida,fechaPartida,duracionPartida,horaReunion,
-    deportePartida,uniformes,empresaPatrocinioPartida,publicoDirigido,nivelExperiencia,indicacionesExtra) 
-        VALUES('$nombre','$desc','$lugar','$fecha','$duracion','$hora','$derpote','$uniforme','$empresa','$publico','$experiencia','$extra')";
-
+    
+    $insertarRegistro = "INSERT INTO partida (nombrePartida,descripcionPartida,lugarPartida,fechaPartida,duracionPartida,horaReunion,deportePartida,uniformes,empresaPatrocinioPartida,publicoDirigido,nivelExperiencia,indicacionesExtra,idDeportivo,idUsuario)VALUES('$nombre','$desc','$lugar','$fecha','$duracion','$hora','$deporte','$uniforme','$empresa','$publico','$experiencia','$extra',".$idDepor.",".$_SESSION['id'].")";
+    echo $insertarRegistro;
     $ejecutarRegistro = mysqli_query($enlace, $insertarRegistro);
+    
 
     echo '<script type="text/javascript">
-        window.location.href = "login.php";
+        window.location.href = "deportivo.php?id='.$idDepor.'";
       </script>';
 
 }

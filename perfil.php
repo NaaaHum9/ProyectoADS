@@ -1,13 +1,11 @@
 <?php
+include 'php/connection.php';
+include 'php/deporBack.php';
+$enlace = conexion();
 session_start();
 
-$servidor = "localhost";
-$usuario = "root";
-$clave = "root";
-$baseDeDatos = "aprovDep";
-
-$enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 if ($_SESSION != null) {
+
     if (isset($_GET['myFlag'])) {
         $idUser = $_SESSION["id"];
 
@@ -17,40 +15,108 @@ if ($_SESSION != null) {
 } else {
     $idUser = $_GET['id'];
 }
+
 $consulta = "SELECT * from usuario where idUsuario=$idUser";
 $sql = mysqli_query($enlace, $consulta);
 $arr = mysqli_fetch_array($sql);
 
 $sql2 = mysqli_query($enlace, "SELECT *
     FROM comentUsuario INNER JOIN usuario ON comentUsuario.autor = usuario.idUsuario where comentUsuario.idUsuario=$idUser");
-$sql3 = mysqli_query($enlace, "SELECT contenido, fecha, autorID, imagen, comentedNombre
+$arr2 = mysqli_fetch_array($sql);
+
+$sql3 = mysqli_query($enlace, "SELECT 
+    contenido, 
+    fecha, 
+    autorID, 
+    autorIDUsuario,         -- idUsuario del autor
+    imagen, 
+    comentedNombre, 
+    comentedIDDeportivo     -- idDeportivo del espacio comentado
 FROM (
     -- Primera subconsulta: Comentarios de usuario con usuario comentado
-    SELECT contenido, fecha, autor.nombre AS autorID, autor.imagen AS imagen, comentado.nombre AS comentedNombre
-    FROM comentUsuario
-    INNER JOIN usuario AS autor ON comentUsuario.autor = autor.idUsuario
-    INNER JOIN usuario AS comentado ON comentUsuario.idUsuario = comentado.idUsuario
-    WHERE comentUsuario.autor = $idUser
+    SELECT 
+        contenido, 
+        fecha, 
+        autor.nombre AS autorID, 
+        autor.idUsuario AS autorIDUsuario,   -- idUsuario del autor
+        autor.imagen AS imagen, 
+        comentado.nombre AS comentedNombre, 
+        NULL AS comentedIDDeportivo          -- Valor NULL para mantener las columnas alineadas
+    FROM 
+        comentUsuario
+    INNER JOIN 
+        usuario AS autor ON comentUsuario.autor = autor.idUsuario
+    INNER JOIN 
+        usuario AS comentado ON comentUsuario.idUsuario = comentado.idUsuario
+    WHERE 
+        comentUsuario.autor = 1
 
     UNION ALL
 
     -- Segunda subconsulta: Comentarios deportivos con el nombre del deporte correcto
-    SELECT contenido, fecha, usuario.nombre AS autorID, usuario.imagen AS imagen, deportivo.nombre AS comentedNombre
-    FROM comentDeportivo
-    INNER JOIN usuario ON comentDeportivo.autor = usuario.idUsuario
-    INNER JOIN deportivo ON comentDeportivo.idDeportivo = deportivo.idDeportivo  -- Cambiado a hacer JOIN en la relación correcta
-    WHERE comentDeportivo.autor = $idUser
+    SELECT 
+        contenido, 
+        fecha, 
+        usuario.nombre AS autorID, 
+        usuario.idUsuario AS autorIDUsuario,  -- idUsuario del autor
+        usuario.imagen AS imagen, 
+        deportivo.nombre AS comentedNombre, 
+        deportivo.idDeportivo AS comentedIDDeportivo  -- idDeportivo del espacio comentado
+    FROM 
+        comentDeportivo
+    INNER JOIN 
+        usuario ON comentDeportivo.autor = usuario.idUsuario
+    INNER JOIN 
+        deportivo ON comentDeportivo.idDeportivo = deportivo.idDeportivo
+    WHERE 
+        comentDeportivo.autor = 1
+
 ) AS comentarios_comb
 
-ORDER BY fecha DESC;");
+ORDER BY fecha DESC;
+");
 
-function checkFlag()
+function checkFlag($enlace)
 {
 
     if ($_SESSION != NULL) {
         if (!isset($_GET['myFlag'])) {
             if ($_GET['id'] != $_SESSION['id']) {
-                echo '<h4>Ingresa un comentario:</h4>
+                $query = "SELECT * FROM amigo where idAmigo1=" . $_GET['id'] . " OR idAmigo2=" . $_GET['id'];
+                    $find = mysqli_query($enlace, $query);
+                    $fetch = mysqli_fetch_array($find);
+
+                    if (!empty($fetch)) {
+
+                        echo '<div class="d-grid gap-2">
+                                            <a class="btn btn-danger" href="php/participarPartida.php?func=del&idPartida=' . $fetch['idPartida'] . '&id=' . $_SESSION['id'] . '" >Eliminar Amigo</a>
+                                            </div>';
+
+                    } else {
+                        $query = "SELECT * FROM soliamigo where idAmigo1=" . $_GET['id'];
+                        $find = mysqli_query($enlace, $query);
+                        $fetch = mysqli_fetch_array($find);
+                        if (!empty($fetch)) {
+
+                            echo $fetch[0];
+                            echo '<div class="d-grid gap-2">
+                                                <a class="btn btn-warning" href="amigo.php?func=aceptar&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Aceptar Solicitud de Amistad</a>
+                                                </div>';
+                        } else {
+
+                            $query = "SELECT * FROM soliamigo where idAmigo2=" . $_GET['id'];
+                            $find = mysqli_query($enlace, $query);
+                            $fetch = mysqli_fetch_array($find);
+                            if (!empty($fetch)) {
+
+                                echo '<div class="d-grid gap-2"><a class="btn btn-danger" href="amigo.php?func=cancel&idPerfil='.$_GET['id'].'&id='.$_SESSION['id'].'" >Cancelar Solicitud de Amistad</a></div>';
+
+                            }else{
+                                echo '<div class="d-grid gap-2"><a class="btn btn-primary" href="amigo.php?func=soli&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Enviar Solicitud de Amistad</a></div>';
+                            }
+                        }
+                    }
+                echo '<hr><h4>Ingresa un comentario:</h4>
                     <form role="form" method="post">
                         <div class="form-group">
                             <textarea class="form-control" name="comentario" rows="3"
@@ -59,9 +125,10 @@ function checkFlag()
                         <input type="submit" class="btn btn-success" name="subComm" value="Enviar comentario">
                     </form>
                     <hr><br>';
+
             }
         }
-        
+
     }
 }
 
@@ -75,8 +142,8 @@ function checkFlag()
         Aprovechamiento de Espacios Deportivos
     </title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="libraries/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
@@ -198,11 +265,22 @@ function checkFlag()
     <div class="container-fluid">
         <div class="row content">
             <div class="col-sm-4 sidenav">
-                
-                <a href="#" data-bs-toggle="modal" data-bs-target="#myModal">
-                    <img id="imgDep" class="img-thumbnail" src=<?php echo '"' . $arr[4] . '"' ?>></a>
+                <?php
+
+                if (!empty($_SESSION)) {
+                    if ($idUser == $_SESSION['id']) {
+                        echo '<a href="#" data-bs-toggle="modal" data-bs-target="#myModal">';
+                    } else {
+                        echo '<a href="#">';
+                    }
+                } else {
+                    echo '<a href="#">';
+                }
+                ?>
+                <img id="imgDep" class="img-thumbnail" src=<?php echo '"' . $arr[5] . '"'; ?>></a>
+
                 <b>
-                    <p>Reputación: <?php echo $arr[5]; ?>/5.0</p>
+                    <p>Reputación: <?php echo $arr[9]; ?>/5.0</p>
                 </b>
                 <b>
                     <p>Deportes:</p>
@@ -223,7 +301,13 @@ function checkFlag()
             <div class="col-sm-6">
                 <h1><?php echo $arr[1]; ?></h1>
                 <hr>
-                <?php checkFlag(); ?>
+                <?php
+                if (!empty($_SESSION)) {
+                    
+                }
+                ?>
+                
+                <?php checkFlag($enlace); ?>
 
                 <button id="alter" class="btn btn-success" onclick="alternarDivs()">Ver comentarios hechos por el
                     usuario</button>
@@ -238,9 +322,10 @@ function checkFlag()
                         }
                         $fecha = new DateTime($row['fecha']);
                         $date = $fecha->format('d-m-Y H:i A');
+                        echo '<script>alert("' . $row['imagen'] . '");</script>';
                         ?>
                         <div class="col-sm-2 text-center">
-                            <a href=<?php echo '"perfil.php?id=' . $row['autor'] . '"' ?>>
+                            <a href=<?php echo '"perfil.php?id=' . $row['autorIDUsuario'] . '"' ?>>
                                 <img id="perfil" src=<?php echo "'$ruta'"; ?> class="rounded" height="65" width="65"
                                     alt="Avatar">
                             </a>
@@ -258,11 +343,12 @@ function checkFlag()
                         if ($row['imagen'] != NULL) {
                             $ruta = $row['imagen'];
                         }
+
                         $fecha = new DateTime($row['fecha']);
                         $date = $fecha->format('d-m-Y H:i A');
                         ?>
                         <div class="col-sm-2 text-center">
-                            <a href=<?php echo '"perfil.php?id=' . $row['autorID'] . '"' ?>>
+                            <a href=<?php echo '"perfil.php?id=' . $row['autorIDUsuario'] . '"' ?>>
                                 <img id="perfil" src=<?php echo "'$ruta'"; ?> class="rounded" height="65" width="65"
                                     alt="Avatar">
                             </a>

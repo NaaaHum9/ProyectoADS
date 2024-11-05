@@ -1,13 +1,7 @@
 <?php
-    session_start();
-
-    
-    $servidor = "localhost";
-    $usuario = "root";
-    $clave ="root";
-    $baseDeDatos = "aprovDep";
-
-    $enlace= mysqli_connect($servidor,$usuario,$clave,$baseDeDatos);
+include 'php/connection.php';
+$enlace=conexion();
+session_start();
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +10,7 @@
         <title>
             Aprovechamiento de Espacios Deportivos
         </title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="libraries/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <style>
             body{
                 background-color:  rgb(35, 81, 0);
@@ -79,15 +73,8 @@
             <a class="navButton" href="buscador.php">Deportivos</a>
             <a class="navButton" disabled href="#"></a>
             <?php
-                if($_SESSION!=NULL){
-                    echo "<a class='navButton' href='perfil.php?myFlag'>Mi Cuenta</a><br>";
-                    echo "<a class='navButton' href='logout.php'>Cerrar Sesión</a>";
-                }else{
-                    echo "<a class='navButton' href='login.php'>Inicio Sesión</a><br>";
-                    echo "<a class='navButton' href='signup.php'>Registrar</a>";
-                }
+                validarNavBar($_SESSION);
             ?>
-            
         </nav>
         <div class="container-fluid">
             <div class="titulo">

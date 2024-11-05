@@ -1,12 +1,10 @@
 <?php
+include 'php/connection.php';
+include 'php/deporBack.php';
+$enlace = conexion();
 session_start();
 
-$servidor = "localhost";
-$usuario = "root";
-$clave ="root";
-$baseDeDatos = "aprovDep";
 
-$enlace= mysqli_connect($servidor,$usuario,$clave,$baseDeDatos);
 $consulta = "SELECT imagen FROM usuario where idUsuario=".$_SESSION["id"];
 $sqlImg = mysqli_query($enlace,$consulta);
 $old=mysqli_fetch_array($sqlImg);

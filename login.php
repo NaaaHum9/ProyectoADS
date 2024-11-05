@@ -125,12 +125,13 @@ if (!empty($_POST["logSub"])) {
 
         } else {
             $_SESSION["nombre"] = $arr[1];
-            $_SESSION["correo"] = $arr[2];
+            $_SESSION["user"] = $arr[6];
+            $_SESSION["correo"] = $arr[3];
             $_SESSION["id"] = $arr[0];
-
-            echo '<script type="text/javascript">';
-            echo 'window.location.href="index.php";';
-            echo '</script>';
+            $_SESSION["tipo"]=$arr[10];
+            echo '<script> window.location.href="index.php";</script>';
+            
+            
         }
     }
 }

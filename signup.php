@@ -2,7 +2,7 @@
 $servidor = "localhost";
 $usuario = "root";
 $clave = "root";
-$baseDeDatos = "aprovDep";
+$baseDeDatos = "test";
 $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 ?>
 
@@ -97,7 +97,9 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 <?php
     
     if(!empty($_POST["subBuscr"])) {
+        echo '<script>alert("holis");</script>';
     if(isset($_POST["sign"])){
+        echo '<script>alert("holis");</script>';
         $nombre= $_POST["nombre"];
         $email= $_POST["email"];
         $pass= $_POST["pass"];

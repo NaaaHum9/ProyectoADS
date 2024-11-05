@@ -14,7 +14,7 @@ CREATE TABLE usuario (
     -- amigos VARCHAR(255),-- Otra tabla
     reputacion DECIMAL(3, 1) NOT NULL
 );
-
+--Insertar tipoUsuario
 
 
 CREATE TABLE amigo(
@@ -138,7 +138,7 @@ CREATE TABLE negocio(
     duenoNegocio VARCHAR(100),
     serviciosNegocio VARCHAR(100),
     productosNegocio VARCHAR(100),-- Otra tabla
-    horarioNegocio VARCHAR(100)
+    horarioNegocio VARCHAR(100),
     tipoNegocio VARCHAR(255),
     ubicacionNegocio VARCHAR(100),
     descripcionNegocio VARCHAR(255),
@@ -164,7 +164,7 @@ CREATE TABLE partida(
     indicacionesExtra TEXT,
     uniformes VARCHAR(255),
     idDeportivo int not null,
-    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo),
     idUsuario int not null,
     FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
 );
@@ -172,8 +172,8 @@ CREATE TABLE partida(
 CREATE TABLE participante(
     idParti int auto_increment PRIMARY KEY,
     idPartida INT NOT NULL,
-    idUsuario INT NOT NULL,
-)
+    idUsuario INT NOT NULL
+);
 
 CREATE TABLE torneo(
     idTorneo INT auto_increment PRIMARY KEY,
@@ -208,7 +208,7 @@ CREATE TABLE comentTorneo (
 );
 
 
-CREATE TABLE cursos(
+CREATE TABLE curso(
     idCurso int auto_increment PRIMARY KEY,
     nombreCurso VARCHAR(255) NOT NULL,
     objetivoCurso TEXT,
@@ -227,7 +227,7 @@ CREATE TABLE cursos(
     materialEquipamineto TEXT,
     nivelExperiencia VARCHAR(100),
     idDeportivo int not null,
-    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo)
+    FOREIGN KEY (idDeportivo) REFERENCES deportivo(idDeportivo),
     idUsuario int not null,
     FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario)
 );
@@ -254,8 +254,23 @@ BEGIN
 
     
     UPDATE deportivo SET calificacion = nuevo_promedio WHERE id = NEW.idDeportivo;
-END;
+END;$$
 
+DELIMITER $$
+CREATE TRIGGER updateAvgDepor2
+AFTER UPDATE ON calificacion
+FOR EACH ROW
+BEGIN
+    DECLARE nuevo_promedio DECIMAL(10, 2);
+
+    
+    SELECT AVG(calificacion) INTO nuevo_promedio FROM calificacion where idDeportivo=NEW.idDeportivo;
+
+    
+    UPDATE deportivo SET calificacion = nuevo_promedio WHERE id = NEW.idDeportivo;
+END;$$
+
+DELIMITER $$
     CREATE TRIGGER updateAvgUser
 AFTER INSERT ON reputacion
 FOR EACH ROW
@@ -266,5 +281,5 @@ BEGIN
     SELECT AVG(reputacion) INTO nuevopromedio FROM reputacion where calificado= NEW.calificado;
 
     
-    UPDATE deportivo SET reputacion = nuevopromedio WHERE calificado= NEW.calificado;
+    UPDATE usuario SET reputacion = nuevopromedio WHERE calificado= NEW.calificado;
 END;$$
