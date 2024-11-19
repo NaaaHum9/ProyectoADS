@@ -19,7 +19,7 @@ if (isset($_GET['id'])) {
 }
 
 $consulta = "SELECT * from deportivo where idDeportivo=" . $idDepor;
-$sql = mysqli_query($enlace, $consulta);
+$sql = mysqli_query($enlace, $consulta);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 
 
 $sql2 = mysqli_query($enlace, "SELECT * , usuario.nombre, usuario.imagen
@@ -395,10 +395,10 @@ if (isset($_POST['rating'])) {
                 <?php
                 if (!empty($_SESSION)) {
                     if (($_SESSION['id'] == $arr[19])) {
-                        echo '<a href="cambioEspacios.php?id='.$idDepor.'" class="btn btn-secondary btn-lg">Editar espacio</a>';
+                        echo '<a href="cambioEspacios.php?id=' . $idDepor . '" class="btn btn-secondary btn-lg">Editar espacio</a>';
                     }
                     if (($_SESSION['tipo'] == 0)) {
-                        echo '<a href="cambioEspacios.php?id='.$idDepor.'" class="btn btn-secondary btn-lg">Editar espacio</a>
+                        echo '<a href="cambioEspacios.php?id=' . $idDepor . '" class="btn btn-secondary btn-lg">Editar espacio</a>
                         <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">Eliminar espacio</button><hr>';
                     }
                 }
@@ -521,29 +521,29 @@ if (isset($_POST['rating'])) {
                                                         <b>Deporte:</b><?php echo $row['deportePartida'] ?>
                                                     </td>
                                                 </tr>
-                                                    <td colspan="2">
-                                                        <b>Descripción:</b><br><?php echo $row['descripcionPartida'] ?>
-                                                    </td>
+                                                <td colspan="2">
+                                                    <b>Descripción:</b><br><?php echo $row['descripcionPartida'] ?>
+                                                </td>
                                     </tr>
                             </table>
-                            <?php 
-                                if (!empty($_SESSION)) {
-                                        $query="SELECT * FROM participante where idPartida=".$row['idPartida']." AND idUsuario=".$_SESSION['id'];
-                                        $find=mysqli_query($enlace,$query);
-                                        $fetch=mysqli_fetch_array($find);
+                            <?php
+                            if (!empty($_SESSION)) {
+                                $query = "SELECT * FROM participante where idPartida=" . $row['idPartida'] . " AND idUsuario=" . $_SESSION['id'];
+                                $find = mysqli_query($enlace, $query);
+                                $fetch = mysqli_fetch_array($find);
 
-                                        if(!empty($fetch)){
+                                if (!empty($fetch)) {
 
-                                            echo '<br><div class="d-grid gap-2">
-                                            <a class="btn btn-danger" href="php/participarPartida.php?func=del&idPartida='.$row['idPartida'].'&id='.$_SESSION['id'].'" >Dejar de participar</a>
+                                    echo '<br><div class="d-grid gap-2">
+                                            <a class="btn btn-danger" href="php/participarPartida.php?func=del&idPartida=' . $row['idPartida'] . '&id=' . $_SESSION['id'] . '" >Dejar de participar</a>
                                             </div>';
 
-                                        }else{
-                                            echo '<br><div class="d-grid gap-2">
-                                            <a class="btn btn-warning" href="php/participarPartida.php?func=ins&idPartida='.$row['idPartida'].'&id='.$_SESSION['id'].'" >Participar</a>
+                                } else {
+                                    echo '<br><div class="d-grid gap-2">
+                                            <a class="btn btn-warning" href="php/participarPartida.php?func=ins&idPartida=' . $row['idPartida'] . '&id=' . $_SESSION['id'] . '" >Participar</a>
                                             </div>';
-                                        }
                                 }
+                            }
                             ?>
                             </td>
 
@@ -618,7 +618,7 @@ if (isset($_POST['rating'])) {
                             });
                         </script>
 
-                        
+
                     </div>
                     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
                         <br>
@@ -657,7 +657,7 @@ if (isset($_POST['rating'])) {
                                     <?php
                                     $consulta = "SELECT * FROM cancha WHERE idDeportivo=$idDepor";
                                     $resultado = mysqli_query($enlace, $consulta);
-
+                                    $contModal = 1;
                                     while ($row = mysqli_fetch_array($resultado)) {
 
                                         ?>
@@ -765,20 +765,52 @@ if (isset($_POST['rating'])) {
                                         <?php
                                         if (!empty($_SESSION)) {
                                             if (($_SESSION['id'] == $arr[19]) || ($_SESSION['tipo'] == 0)) {
-                                                echo '<td style="width: auto;"><a class="btn btn-secondary" href="cambioCanchas.php?id='.$row['idCancha'].'"><i class="bi bi-pencil-square"></i></a><br>';
+                                                echo '<td style="width: auto;"><a class="btn btn-secondary" href="cambioCanchas.php?id=' . $row['idCancha'] .'&idDepor='.$idDepor. '"><i class="bi bi-pencil-square"></i></a><br>';
                                             }
                                             if (($_SESSION['tipo'] == 0)) {
-                                                echo '<a class="btn btn-danger" href="#editar"><i class="bi bi-trash"></i></a>';
-                                                /*echo '<button type="button" class="btn btn-secondary btn-lg">Editar espacio</button> <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">Eliminar espacio</button><hr>';*/
+
+                                                echo '<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCancha' . $contModal . '"><i class="bi bi-trash"></i></button><hr>';
+
+                                                echo $row['idCancha'];
+
+
                                             }
                                             echo '</td>';
                                         }
                                         ?>
                                     </tr>
-                                <?php }
+                                    <!-- Modal -->
+                                    <div class="modal fade" <?php echo 'id="deleteCancha' . $contModal . '"' ?> tabindex="-1"
+                                        aria-labelledby="deleteCanchaModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteCanchaModalLabel">Confirmar borrar
+                                                        cancha</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    ¿Estás seguro de borrar la cancha? Ésta acción no se puede revertir.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancelar</button>
+                                                    <a href=<?php echo '"borrarCanchas.php?id=' . $row['idCancha'] . '"'; ?>><?php echo $row['idCancha']; ?><button type="button"
+                                                            class="btn btn-danger">Borrar</button></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php
+                                    $contModal++;
+                                    }
                                     ?>
                             </tbody>
                         </table>
+
+
+
                         <script>
                             /* Initialization of datatables */
                             $(document).ready(function () {
@@ -812,6 +844,10 @@ if (empty($calif)) {
     checarCalif($calif[3]);
 }
 
+function delete()
+{
+
+}
 
 function updateRate($link, $cons, $idUser)
 {
@@ -819,7 +855,7 @@ function updateRate($link, $cons, $idUser)
         echo '<script> window.location.href = "login.php";</script>';
     } else {
         $query = mysqli_query($link, $cons);
-        echo '<script> window.location.href = window.location.href;</script>';
+        echo '<script> window.location.href = "'.$_SERVER['HTTP_REFERER'].'";</script>';
     }
 }
 

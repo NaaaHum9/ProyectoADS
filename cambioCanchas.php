@@ -4,7 +4,8 @@ include 'php/deporBack.php';
 $enlace = conexion();
 session_start();
 $id=$_GET['id'];
-$consulta="SELECT * FROM cancha where idCancha=".$id;
+$idDepor=$_GET['idDepor'];
+$consulta="SELECT cancha.*, deportivo.nombre FROM cancha JOIN deportivo ON cancha.idDeportivo = deportivo.idDeportivo where idCancha=".$id;
 $query=mysqli_query($enlace,$consulta);
 $info=mysqli_fetch_array($query);
 $consulta="SELECT * FROM deportivo where idDeportivo=".$id;
@@ -18,7 +19,7 @@ $depor=mysqli_fetch_array($query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alta de Cancha</title>
+    <title>Actualizar Cancha</title>
 </head>
 
 <body>
@@ -53,7 +54,7 @@ $depor=mysqli_fetch_array($query);
                 <ul>
                     <li>
                         <label for="nombre">Nombre del espacio deportivo:</label>
-                        <input type="text" value=<?php echo '"'.$depor[1].'"';?> name="nombre" id="nombre" disabled />
+                        <input type="text" value=<?php echo '"'.$info['nombre'].'"';?> name="nombre" id="nombre" disabled />
                     </li>
                     <li>
                         <label for="ubicacion">Deporte:</label>
@@ -186,7 +187,7 @@ $depor=mysqli_fetch_array($query);
                         <input type="time" name="horario-cierre" id="horario-cierre">
                     </li>
                 <div class="div-boton-resgistro">
-                    <input type="submit" name="alta" onclick="leerCheckboxes()" value='Dar de alta'>
+                    <input type="submit" name="alta" onclick="leerCheckboxes()" value='Guardar Cambios'>
                 </div>
             </form>
 
@@ -404,10 +405,11 @@ $depor=mysqli_fetch_array($query);
         $horario = $_POST["horario-apertura"] . "a.m.-" . $_POST["horario-cierre"] . "p.m.";
         
         
-        $consulta = "INSERT INTO cancha (etiqueta,deporteCancha,medidasCancha,tipoSueloCancha,equipamientoCanchaTipo,iluminacionCanchaStatus,techadoCancha,gradasCanchaStatus,banosCanchasStatus,vestidoresCanchaStatus,horarioCancha,idDeportivo) values('".$matricula."','".$deporte."','".$medida."','".$suelo."','".$equip."',".$ilumi.",".$techo.",".$grada.",".$bano.",".$vest.",'".$horario."',".$depor[0].")";
-        echo $consulta;
+        $consulta = "INSERT INTO cancha (etiqueta,deporteCancha,medidasCancha,tipoSueloCancha,equipamientoCanchaTipo,ilminacionCanchaStatus,techadoCancha,gradasCanchaStatus,banosCanchasStatus,vestidoresCanchaStatus,horarioCancha,idDeportivo) values('".$matricula."','".$deporte."','".$medida."','".$suelo."','".$equip."',".$ilumi.",".$techo.",".$grada.",".$bano.",".$vest.",'".$horario."',".$info['idDeportivo'].")";
+        $consulta = "UPDATE cancha set deporteCancha = '$deporte', medidasCancha = '$medida' ,tipoSueloCancha='$suelo',equipamientoCanchaTipo = '$equip',iluminacionCanchaStatus=$ilumi,techadoCancha=$techo,gradasCanchaStatus=$grada,banosCanchasStatus=$bano,vestidoresCanchaStatus=$vest, horarioCancha='$horario' WHERE idDeportivo = ".$info['idDeportivo']." AND idCancha = ".$info['idCancha'];
+        echo '<script>alert("'.$consulta.'");</script>';
         $query=mysqli_query($enlace,$consulta);
-        echo '<script>window.location.href="deportivo.php?id='.$depor[0].'";</script>';
+        echo '<script>window.location.href="deportivo.php?id='.$idDepor.'";</script>';
     }
     ?>
 </body>
