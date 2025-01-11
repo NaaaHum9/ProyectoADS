@@ -1,10 +1,8 @@
 <?php
-$servidor = "localhost";
-$usuario = "root";
-$clave = "root";
-$baseDeDatos = "test";
 session_start();
-$enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
+include 'php/connection.php';
+$enlace = conexion();
+
 ?>
 
 
@@ -124,11 +122,11 @@ if (!empty($_POST["logSub"])) {
 
 
         } else {
-            $_SESSION["nombre"] = $arr[1];
-            $_SESSION["user"] = $arr[6];
-            $_SESSION["correo"] = $arr[3];
-            $_SESSION["id"] = $arr[0];
-            $_SESSION["tipo"]=$arr[10];
+            $_SESSION["nombre"] = $arr['nombre'];
+            $_SESSION["user"] = $arr['nombreUsuario'];
+            $_SESSION["correo"] = $arr['correo'];
+            $_SESSION["id"] = $arr['idUsuario'];
+            $_SESSION["tipo"]=$arr['tipoUsuario'];
             echo '<script> window.location.href="index.php";</script>';
             
             

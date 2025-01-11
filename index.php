@@ -2,6 +2,7 @@
 include 'php/connection.php';
 $enlace=conexion();
 session_start();
+date_default_timezone_set('America/Mexico_City');
 ?>
 
 <!DOCTYPE html>

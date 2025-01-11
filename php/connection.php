@@ -3,7 +3,7 @@ function conexion(){
 
     $servidor = "localhost";
     $usuario = "root";
-    $clave ="root";
+    $clave ="";
     $baseDeDatos = "test";
 
     $enlace= mysqli_connect($servidor,$usuario,$clave,$baseDeDatos);

@@ -14,8 +14,13 @@ CREATE TABLE usuario (
     -- amigos VARCHAR(255),-- Otra tabla
     reputacion DECIMAL(3, 1) NOT NULL
 );
---Insertar tipoUsuario
-
+-- Insertar tipoUsuario
+CREATE TABLE soliAmigo(
+    idSoli INT AUTO_INCREMENT PRIMARY KEY,
+    idAmigo1 INT, idAmigo2 INT, 
+    FOREIGN KEY (idAmigo1) REFERENCES usuario(idUsuario),
+    FOREIGN KEY (idAmigo2) REFERENCES usuario(idUsuario)
+);
 
 CREATE TABLE amigo(
     idAmigo INT AUTO_INCREMENT PRIMARY KEY,

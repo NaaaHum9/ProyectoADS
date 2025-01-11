@@ -9,11 +9,36 @@ if ($_SESSION != null) {
     if (isset($_GET['myFlag'])) {
         $idUser = $_SESSION["id"];
 
-    } else {
+    } elseif($_GET['id']==$_SESSION['id']){
+        echo '<script> window.location.href = "perfil.php?myFlag";</script>';
+        
+    }else {
         $idUser = $_GET['id'];
     }
 } else {
     $idUser = $_GET['id'];
+}
+function updateRate($link, $cons, $idUser)
+{
+    if ($idUser == -1) {
+        echo '<script> window.location.href = "login.php";</script>';
+    } else {
+        $query = mysqli_query($link, $cons);
+        echo '<script> window.location.href = "' . $_SERVER['HTTP_REFERER'] . '";</script>';
+    }
+}
+
+
+if (isset($_POST['rating'])) {
+
+    if (empty($calif)) {
+        $consulta = "INSERT INTO reputacion(autor,calificado,reputacion) VALUES (" . $_SESSION['id'] . ",$idUser," . $_POST['rating'] . ")";
+        echo '<script>alert("' . $consulta . '");</script>';
+    } else {
+        $consulta = "UPDATE reputacion SET calificacion = " . $_POST['rating'] . " WHERE autor = $_SESSION AND calificado = $idUser;";
+    }
+    updateRate($enlace, $consulta, $idUser);
+
 }
 
 $consulta = "SELECT * from usuario where idUsuario=$idUser";
@@ -21,7 +46,7 @@ $sql = mysqli_query($enlace, $consulta);
 $arr = mysqli_fetch_array($sql);
 
 $sql2 = mysqli_query($enlace, "SELECT *
-    FROM comentUsuario INNER JOIN usuario ON comentUsuario.autor = usuario.idUsuario where comentUsuario.idUsuario=$idUser");
+    FROM comentUsuario INNER JOIN usuario ON comentUsuario.autor = usuario.idUsuario where comentUsuario.idUsuario=$idUser ORDER BY comentUsuario.fecha DESC;");
 $arr2 = mysqli_fetch_array($sql);
 
 $sql3 = mysqli_query($enlace, "SELECT 
@@ -49,7 +74,7 @@ FROM (
     INNER JOIN 
         usuario AS comentado ON comentUsuario.idUsuario = comentado.idUsuario
     WHERE 
-        comentUsuario.autor = 1
+        comentUsuario.autor = $idUser
 
     UNION ALL
 
@@ -69,7 +94,7 @@ FROM (
     INNER JOIN 
         deportivo ON comentDeportivo.idDeportivo = deportivo.idDeportivo
     WHERE 
-        comentDeportivo.autor = 1
+        comentDeportivo.autor = $idUser
 
 ) AS comentarios_comb
 
@@ -83,39 +108,38 @@ function checkFlag($enlace)
         if (!isset($_GET['myFlag'])) {
             if ($_GET['id'] != $_SESSION['id']) {
                 $query = "SELECT * FROM amigo where idAmigo1=" . $_GET['id'] . " OR idAmigo2=" . $_GET['id'];
+                $find = mysqli_query($enlace, $query);
+                $fetch = mysqli_fetch_array($find);
+
+                if (!empty($fetch)) {
+
+                    echo '<div class="d-grid gap-2">
+                                            <a class="btn btn-danger" href="amigo.php?func=del&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Eliminar Amigo</a>
+                                            </div>';
+
+                } else {
+                    $query = "SELECT * FROM soliamigo where idAmigo1=" . $_GET['id'];
                     $find = mysqli_query($enlace, $query);
                     $fetch = mysqli_fetch_array($find);
-
                     if (!empty($fetch)) {
 
                         echo '<div class="d-grid gap-2">
-                                            <a class="btn btn-danger" href="php/participarPartida.php?func=del&idPartida=' . $fetch['idPartida'] . '&id=' . $_SESSION['id'] . '" >Eliminar Amigo</a>
-                                            </div>';
-
+                                                <a class="btn btn-warning" href="amigo.php?func=aceptar&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Aceptar Solicitud de Amistad</a>
+                                                </div>';
                     } else {
-                        $query = "SELECT * FROM soliamigo where idAmigo1=" . $_GET['id'];
+
+                        $query = "SELECT * FROM soliamigo where idAmigo2=" . $_GET['id'];
                         $find = mysqli_query($enlace, $query);
                         $fetch = mysqli_fetch_array($find);
                         if (!empty($fetch)) {
 
-                            echo $fetch[0];
-                            echo '<div class="d-grid gap-2">
-                                                <a class="btn btn-warning" href="amigo.php?func=aceptar&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Aceptar Solicitud de Amistad</a>
-                                                </div>';
+                            echo '<div class="d-grid gap-2"><a class="btn btn-danger" href="amigo.php?func=cancel&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Cancelar Solicitud de Amistad</a></div>';
+
                         } else {
-
-                            $query = "SELECT * FROM soliamigo where idAmigo2=" . $_GET['id'];
-                            $find = mysqli_query($enlace, $query);
-                            $fetch = mysqli_fetch_array($find);
-                            if (!empty($fetch)) {
-
-                                echo '<div class="d-grid gap-2"><a class="btn btn-danger" href="amigo.php?func=cancel&idPerfil='.$_GET['id'].'&id='.$_SESSION['id'].'" >Cancelar Solicitud de Amistad</a></div>';
-
-                            }else{
-                                echo '<div class="d-grid gap-2"><a class="btn btn-primary" href="amigo.php?func=soli&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Enviar Solicitud de Amistad</a></div>';
-                            }
+                            echo '<div class="d-grid gap-2"><a class="btn btn-primary" href="amigo.php?func=soli&idPerfil=' . $_GET['id'] . '&id=' . $_SESSION['id'] . '" >Enviar Solicitud de Amistad</a></div>';
                         }
                     }
+                }
                 echo '<hr><h4>Ingresa un comentario:</h4>
                     <form role="form" method="post">
                         <div class="form-group">
@@ -147,13 +171,78 @@ function checkFlag($enlace)
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <style>
+        .star-cb-group {
+            /* remove inline-block whitespace */
+            font-size: 0;
+            /* flip the order so we can use the + and ~ combinators */
+            unicode-bidi: bidi-override;
+            direction: rtl;
+            /* the hidden clearer */
+        }
+
+        .star-cb-group * {
+            font-size: 1rem;
+        }
+
+        .star-cb-group>input {
+            display: none;
+        }
+
+        .star-cb-group>input+label {
+            /* only enough room for the star */
+            display: inline-block;
+            overflow: hidden;
+            text-indent: 9999px;
+            width: 1em;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 40px;
+        }
+
+        .star-cb-group>input+label:before {
+            display: inline-block;
+            text-indent: -9999px;
+            content: "☆";
+            color: #888;
+        }
+
+        .star-cb-group>input:checked~label:before,
+        .star-cb-group>input+label:hover~label:before,
+        .star-cb-group>input+label:hover:before {
+            content: "★";
+            color: #e52;
+            text-shadow: 0 0 1px #333;
+        }
+
+        .star-cb-group>.star-cb-clear+label {
+            text-indent: -9999px;
+            width: .5em;
+            margin-left: -.5em;
+        }
+
+        .star-cb-group>.star-cb-clear+label:before {
+            width: .5em;
+        }
+
+        .star-cb-group:hover>input+label:before {
+            content: "☆";
+            color: #888;
+            text-shadow: none;
+        }
+
+        .star-cb-group:hover>input+label:hover~label:before,
+        .star-cb-group:hover>input+label:hover:before {
+            content: "★";
+            color: #e52;
+            text-shadow: 0 0 1px #333;
+        }
+
         body {
-            background-color: rgb(35, 81, 0);
             display: flex;
             flex-direction: column;
         }
 
-        nav {
+        #navbar {
             background-color: rgb(35, 81, 0);
         }
 
@@ -246,7 +335,7 @@ function checkFlag($enlace)
 </head>
 
 <body style="background-color: white;">
-    <nav class="navbar navbar-expand-lg navbar-light bg-ligh">
+    <nav id='navbar'class="navbar navbar-expand-lg navbar-light bg-ligh">
         <a class="navButton" href="index.php">Inicio</a>
         <a class="navButton" href="buscador.php">Deportivos</a>
         <a class="navButton" disabled href="#"></a>
@@ -278,10 +367,39 @@ function checkFlag($enlace)
                 }
                 ?>
                 <img id="imgDep" class="img-thumbnail" src=<?php echo '"' . $arr[5] . '"'; ?>></a>
-
                 <b>
-                    <p>Reputación: <?php echo $arr[9]; ?>/5.0</p>
+                    <p>Tu calificación: <?php
+                    if (empty($calif[3])) {
+                        echo 'N-A';
+                    } else {
+                        echo $calif[3];
+                    }
+                    ?>/5</p>
+
                 </b>
+                <?php
+                if (!isset($_GET['myFlag'])) {
+                    echo ' 
+                <form method="POST" name="rating">
+                    <fieldset>
+                        <span class="star-cb-group">
+                            <input type="radio" id="rating-5" name="rating" value=5
+                                onclick="this.form.submit()" /><label for="rating-5">5</label>
+                            <input type="radio" id="rating-4" name="rating" value=4
+                                onclick="this.form.submit()" /><label for="rating-4">4</label>
+                            <input type="radio" id="rating-3" name="rating" value=3 onclick="this.form.submit()"
+                                checked="checked" /><label for="rating-3">3</label>
+                            <input type="radio" id="rating-2" name="rating" value=2
+                                onclick="this.form.submit()" /><label for="rating-2">2</label>
+                            <input type="radio" id="rating-1" name="rating" value=1
+                                onclick="this.form.submit()" /><label for="rating-1">1</label>
+                            <input type="radio" id="rating-0" name="rating" value=0 onclick="this.form.submit()"
+                                class="star-cb-clear" /><label for="rating-0">0</label>
+                        </span>
+                    </fieldset>
+                </form>';
+                }
+                ?>
                 <b>
                     <p>Deportes:</p>
                 </b>
@@ -299,19 +417,38 @@ function checkFlag($enlace)
             </div>
 
             <div class="col-sm-6">
-                <h1><?php echo $arr[1]; ?></h1>
+                <h1><?php echo $arr['nombre']; ?></h1>
+                <h5 class="fw-light">@<?php echo $arr['nombreUsuario'];?></h5>
                 <hr>
                 <?php
                 if (!empty($_SESSION)) {
-                    
+
                 }
                 ?>
-                
+
                 <?php checkFlag($enlace); ?>
 
                 <button id="alter" class="btn btn-success" onclick="alternarDivs()">Ver comentarios hechos por el
                     usuario</button>
                 <br><br>
+
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
+                            aria-selected="true">Comentarios hechos por <?php echo $arr['nombre']; ?> </button>
+                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                            type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Partidas</button>
+                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
+                            type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Clubes</button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                    </div>
+                </div>
+
                 <p id="label">Comentarios sobre ti:</p>
                 <hr>
                 <div class="row" id="toMe">
@@ -322,10 +459,9 @@ function checkFlag($enlace)
                         }
                         $fecha = new DateTime($row['fecha']);
                         $date = $fecha->format('d-m-Y H:i A');
-                        echo '<script>alert("' . $row['imagen'] . '");</script>';
                         ?>
                         <div class="col-sm-2 text-center">
-                            <a href=<?php echo '"perfil.php?id=' . $row['autorIDUsuario'] . '"' ?>>
+                            <a href=<?php echo '"perfil.php?id=' . $row['autor'] . '"' ?>>
                                 <img id="perfil" src=<?php echo "'$ruta'"; ?> class="rounded" height="65" width="65"
                                     alt="Avatar">
                             </a>
@@ -406,10 +542,9 @@ if (!empty($_POST["subComm"])) {
         $autor = $_SESSION["id"];
         echo $autor;
         echo $idUser;
-        $fecha = date("Y-m-d H:i:s");
-        $sql = mysqli_query($enlace, "INSERT INTO comentusuario(autor,contenido,fecha,idUsuario) VALUES ($autor,'$contenido','$fecha',$idUser)");
+        $sql = mysqli_query($enlace, "INSERT INTO comentusuario(autor,contenido,idUsuario) VALUES ($autor,'$contenido',$idUser)");
         echo '<script type="text/javascript">';
-        echo 'window.location.href="perfil  .php?id=' . $idUser . '";';
+        echo 'window.location.href="perfil.php?id=' . $idUser . '";';
         echo '</script>';
 
     }

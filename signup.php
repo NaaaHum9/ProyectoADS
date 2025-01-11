@@ -1,7 +1,7 @@
 <?php
 $servidor = "localhost";
 $usuario = "root";
-$clave = "root";
+$clave = "";
 $baseDeDatos = "test";
 $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 ?>
@@ -108,7 +108,6 @@ $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
         $insertarRegistro = "INSERT INTO usuario (nombre,correo,pass,reputacion,imagen) VALUES('$nombre','$email','$pass',0,'img/default.jpg')";
 
         $ejecutarRegistro = mysqli_query($enlace,$insertarRegistro);
-        
         header("Location: login.php", true, 301);
 
         exit();

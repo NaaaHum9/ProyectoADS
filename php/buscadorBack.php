@@ -17,21 +17,18 @@ function buscar($consulta, $enlace, $post){
         }
         if ($filtroSeleccionado == "deporte") {
             $busqueda = $post["deporte"];
-            $consulta = "SELECT *, imgDepor.ruta FROM deportivo 
-          INNER JOIN imgDepor ON imgDepor.idDeportivo = deportivo.idDeportivo 
+            $consulta = "SELECT * FROM deportivo           
           INNER JOIN cancha ON cancha.idDeportivo = deportivo.idDeportivo 
           WHERE cancha.deporteCancha = '$busqueda'";
         }
         if ($filtroSeleccionado == "gradas") {
             $busqueda = $post["gradas"];
             if ($busqueda == "Con gradas") {
-                $consulta = "SELECT *, imgDepor.ruta FROM deportivo 
-          INNER JOIN imgDepor ON imgDepor.idDeportivo = deportivo.idDeportivo 
+                $consulta = "SELECT * FROM deportivo 
           INNER JOIN cancha ON cancha.idDeportivo = deportivo.idDeportivo 
           WHERE cancha.gradasCanchaCantidad > 0";
             } else {
-                $consulta = "SELECT *, imgDepor.ruta FROM deportivo 
-          INNER JOIN imgDepor ON imgDepor.idDeportivo = deportivo.idDeportivo 
+                $consulta = "SELECT * FROM deportivo 
           INNER JOIN cancha ON cancha.idDeportivo = deportivo.idDeportivo 
           WHERE cancha.gradasCanchaCantidad = 0";
             }

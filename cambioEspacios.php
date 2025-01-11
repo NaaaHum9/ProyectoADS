@@ -11,6 +11,10 @@ $consulta="SELECT * FROM deportivo WHERE idDeportivo=".$idDepor;
 $query=mysqli_query($enlace,$consulta);
 $info=mysqli_fetch_array($query);
 
+$datetime = $info['fechaRegistro'];
+
+// Convertir el formato para HTML
+$datetime_for_html = str_replace(' ', 'T', substr($datetime, 0, 16));
 
 ?>
 <!DOCTYPE html>
@@ -54,7 +58,7 @@ $info=mysqli_fetch_array($query);
                 <ul>
                     <li>
                         <label for="nombre">Nombre del espacio deportivo:</label>
-                        <input type="text" name="nombre" id="nombre" value=<?php echo '"'.$info['nombre'].'"';?>/>
+                        <input type="text" name="nombre" id="nombre" value=<?php echo '"'.$info['nombre'].'"';?> required/>
                     </li>
                     <li>
                         <label for="ubicacion">Link de Maps:</label>
@@ -62,7 +66,7 @@ $info=mysqli_fetch_array($query);
                     </li>
                     <li>
                         <label for="dir">Dirección</label>
-                        <textarea name="dir" id="dir" ><?php echo $info['direccion'];?></textarea>
+                        <textarea name="dir" id="dir" required><?php echo $info['direccion'];?></textarea>
                     </li>
                     
                     <li>
@@ -87,12 +91,16 @@ $info=mysqli_fetch_array($query);
                     </li>
                     <li>
                         <label for="imagen-principal">Imagen principal</label>
-                        <input type="file" name="imagen-principal" id="imagen-principal" />
+                        <input type="file" name="imagen-principal" id="imagen-principal" accept="image/*" />
+                    </li>
+                    <li>
+                        <label for="imagen-principal">Imagenes Secundarias</label>
+                        <input class="form-control" type="file" accept="image/*" name="imagen[]" multiple>
                     </li>
 
                     <li>
                         <label for="fecha-registro">Fecha de registro</label>
-                        <input type="date" name="fecha-registro" id="fecha-registro" readonly />
+                        <input type="datetime-local" name="fecha-registro" id="fecha-registro" <?php echo 'value="'.$datetime_for_html.'"';?> />
                     </li>
                     <li>
                         <label for="">Baños:</label>
@@ -236,9 +244,9 @@ $info=mysqli_fetch_array($query);
                     </li>
                     <li>
                         <label for="encargado">Encargado:</label>
-                        <select name="encargado" id="encargado">
+                        <select name="encargado" id="encargado" <?php if($_SESSION['tipo']==2){echo 'disabled';} ?> >
                             <?php
-                            $cons = "SELECT * FROM usuario WHERE tipoUsuario=1";
+                            $cons = "SELECT * FROM usuario WHERE tipoUsuario=2";
                             $res = mysqli_query($enlace, $cons);
                             while ($fila = mysqli_fetch_assoc($res)) {
                                 // Acceder a cada valor
@@ -367,15 +375,6 @@ $info=mysqli_fetch_array($query);
     </style>
 
     <script>
-        const ahora = new Date();
-        const año = ahora.getFullYear();
-        const mes = (ahora.getMonth() + 1).toString().padStart(2, '0'); // Añadir cero inicial
-        const dia = ahora.getDate().toString().padStart(2, '0');
-
-        const fecha = `${año}-${mes}-${dia}`;
-        document.getElementById('fecha-registro').value = fecha;
-
-
 
         function toggleDisabled() {
             let a = document.getElementById('costos');
@@ -498,11 +497,12 @@ $info=mysqli_fetch_array($query);
         $direc = $_POST["dir"];
         $mascota = $_POST["mascotas"];
         $horario = $_POST["horario-apertura"] . "a.m.-" . $_POST["horario-cierre"] . "p.m.";
+        
         $opcion1 = isset($_POST['sin-costo']) ? "NULL" : $_POST["costos"];
         $encar = $_POST["encargado"];
         $tipo = $_POST["tipo-espacio"];
         
-        $consulta = "UPDATE deportivo SET nombre = '".$nombre."',direccion = '".$direc."',horario = '" . $horario . "',    mapa = '" . $ubi . "',  tipoEspacio = '" . $tipo . "',    aceptaMascotas = " . $mascota . ",    costo = " . $opcion1 . ",    idEncargado = " . $encar . " WHERE idDeportivo=";
+        $consulta = "UPDATE deportivo SET nombre = '".$nombre."',direccion = '".$direc."',horario = '" . $horario . "',    mapa = '" . $ubi . "',  tipoEspacio = '" . $tipo . "',    aceptaMascotas = " . $mascota . ",    costo = " . $opcion1 . ",    idResponsable = " . $encar . " WHERE idDeportivo=";
         $consulta= $consulta.$idDepor;
         $query=mysqli_query($enlace,$consulta);
         echo '<script>window.location.href="deportivo.php?id='.$idDepor.'"</script>';

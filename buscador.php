@@ -6,7 +6,6 @@ session_start();
 
 $consulta = "SELECT * from deportivo ";
 $resultado = mysqli_query($enlace, $consulta);
-
 ?>
 
 <!DOCTYPE html>
@@ -334,7 +333,7 @@ $resultado = mysqli_query($enlace, $consulta);
         </form>
         <?php
         if (!empty($_SESSION)) {
-        if ($_SESSION['tipo'] == 0) {
+        if ($_SESSION['tipo'] == 1) {
             echo '<div class="d-grid gap-2">
             <a class="btn btn-success" href="altaEspacios.php" >Agregar un espacio</a>
             </div>';

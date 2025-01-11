@@ -469,8 +469,9 @@ session_start();
         $encar = $_POST["encargado"];
         $tipo = $_POST["tipo-espacio"];
         $fecha = $_POST["fecha-registro"];
-
-        $consulta = "INSERT INTO deportivo (nombre,direccion,horario,mapa,fechaRegistro,tipoEspacio,aceptaMascotas,costo,banosStatus,vigilanciaStatus,idEncargado)values('" . $nombre . "','" . $direc . "','" . $horario . "','" . $ubi . "','" . $fecha . "','" . $tipo . "'," . $mascota . "," . $opcion1 . ",0,".$banos.",".$vigilancia."," . $encar . ")";
+        
+        $consulta = "INSERT INTO deportivo (nombre,direccion,horario,mapa,fechaRegistro,tipoEspacio,aceptaMascotas,costo,banosStatus,vigilanciaStatus,idResponsable)values('".$nombre."','".$direc."','".$horario."','".$ubi."','".$fecha."','".$tipo."',".$mascota.",".$opcion1.",".$banos.",".$vigilancia.",".$encar.")";
+        echo $consulta;
         $query=mysqli_query($enlace,$consulta);
         echo '<script>window.location.href="'.$_SERVER['HTTP_REFERER'].'"</script>';
 

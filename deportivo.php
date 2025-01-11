@@ -3,6 +3,8 @@ include 'php/connection.php';
 include 'php/deporBack.php';
 $enlace = conexion();
 session_start();
+date_default_timezone_set('America/Mexico_City');
+
 
 if (isset($_SESSION['id'])) {
 
@@ -19,7 +21,7 @@ if (isset($_GET['id'])) {
 }
 
 $consulta = "SELECT * from deportivo where idDeportivo=" . $idDepor;
-$sql = mysqli_query($enlace, $consulta);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+$sql = mysqli_query($enlace, $consulta);
 
 
 $sql2 = mysqli_query($enlace, "SELECT * , usuario.nombre, usuario.imagen
@@ -36,13 +38,11 @@ $calif = mysqli_fetch_array($sql4);
 if (isset($_POST['rating'])) {
 
     if (empty($calif)) {
-        $consulta = "INSERT INTO calificacion(idUsuario,idDeportivo,calificacion) VALUES
-        ($idUser,$idDepor," . $_POST['rating'] . ")";
+        $consulta = "INSERT INTO calificacion(idUsuario,idDeportivo,calificacion) VALUES ($idUser,$idDepor," . $_POST['rating'] . ")";
 
     } else {
         $consulta = "UPDATE calificacion SET calificacion = " . $_POST['rating'] . " WHERE idUsuario = $idUser AND idDeportivo = $idDepor;";
     }
-
     updateRate($enlace, $consulta, $idUser);
 
 }
@@ -62,12 +62,14 @@ if (isset($_POST['rating'])) {
     <script src="libraries/js/jquery.min.js"></script>
     <!--Datatable plugin CSS file -->
     <link rel="stylesheet" href="libraries/css/jquery.dataTables.min.css" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!--Datatable plugin JS library file -->
     <script type="text/javascript" src="libraries/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="libraries\bootstrap-icons-1.11.3\bootstrap-icons-1.11.3\font/bootstrap-icons.min.css">
     <script src="libraries/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="libraries/js/deporBack.js"></script>
+    <script type="text/javascript" src="libraries/js/navtab.js"></script>
+
     <style>
         .star-cb-group {
             /* remove inline-block whitespace */
@@ -295,6 +297,10 @@ if (isset($_POST['rating'])) {
                     <p>Instalaciones:</p>
                 </b>
                 <p><?php echo $arr[4]; ?></p>
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3761.3432315911095!2d-99.12668002493727!3d19.483863481806498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d1f9a05593187f%3A0xe37409f0fab22428!2sDeportivo%2018%20de%20Marzo!5e0!3m2!1ses-419!2smx!4v1736505907329!5m2!1ses-419!2smx"
+                    width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
                 <div class="">
                     <div id="map" style="width: 100%; height: 400px;"></div>
                     <script src="https://cdn.jsdelivr.net/npm/ol@v10.2.1/dist/ol.js"></script>
@@ -394,17 +400,17 @@ if (isset($_POST['rating'])) {
                 <hr>
                 <?php
                 if (!empty($_SESSION)) {
-                    if (($_SESSION['id'] == $arr[19])) {
+                    if (($_SESSION['id'] == $arr['idResponsable'])) {
                         echo '<a href="cambioEspacios.php?id=' . $idDepor . '" class="btn btn-secondary btn-lg">Editar espacio</a>';
                     }
-                    if (($_SESSION['tipo'] == 0)) {
+                    if (($_SESSION['tipo'] == 1)) {
                         echo '<a href="cambioEspacios.php?id=' . $idDepor . '" class="btn btn-secondary btn-lg">Editar espacio</a>
                         <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">Eliminar espacio</button><hr>';
                     }
                 }
                 ?>
                 <!-- Modal -->
-                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteeModalLabel"
+                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -450,7 +456,9 @@ if (isset($_POST['rating'])) {
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                         <br>
-                        <div id="coments" class="row" style="border-width: 2px; border-color: black;">
+
+                        <table id="myTable" class="table">
+
                             <?php while ($row = $sql2->fetch_assoc()) {
                                 if ($row['imagen'] != NULL) {
                                     $ruta = $row['imagen'];
@@ -458,30 +466,40 @@ if (isset($_POST['rating'])) {
                                 $fecha = new DateTime($row['fecha']);
                                 $date = $fecha->format('d-m-Y H:i A');
                                 ?>
-                                <div class="col-sm-2 text-center">
-                                    <a href=<?php echo '"perfil.php?id=' . $row['autor'] . '"' ?>>
-                                        <img id="perfil" src=<?php echo "'$ruta'"; ?> class="rounded" height="65" width="65"
-                                            alt="Avatar">
-                                    </a>
-                                </div>
-                                <div class="col-sm-10">
-                                    <h5><b><?php echo $row['nombre'] . " "; ?></b><small><?php echo $date; ?></small></h5>
-                                    <p><?php echo $row['contenido']; ?></p>
-                                    <br>
-                                </div>
+                                <tr>
+                                    <td style="width: 10%; /* Ocupa el mínimo espacio posible */
+        white-space: nowrap; vertical-align: middle; text-align: center;" rowspan="3">
+                                        <a href=<?php echo '"perfil.php?id=' . $row['autor'] . '"' ?>>
+                                            <img id="perfil" src=<?php echo "'$ruta'"; ?> class="rounded" style="height=100%;" alt="Avatar">
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <h5><b><?php echo $row['nombre'] . " "; ?></b>
+                                            <p class="fw-light" style="display: inline;">
+                                                <?php echo "@" . $row['nombreUsuario']; ?></p>
+                                        </h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p><?php echo $row['contenido']; ?></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><small><?php echo $date; ?> </small></td>
+                                </tr>
                             <?php } ?>
-                        </div>
+                        </table>
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"><br>
                         <?php
                         if (!empty($_SESSION)) {
 
-                            if (($_SESSION['tipo'] == 0) || ($_SESSION['id'] == $arr[19])) {
-                                echo '<div class="d-grid gap-2">
+                            echo '<div class="d-grid gap-2">
                                 <a class="btn btn-primary" href="registropartida.php?id=' . $_GET['id'] . '" >Agregar Partida</a>
                                 </div>';
-                            }
                         }
+
                         ?>
                         <br>
                         <table id="" class="display" style="width:100%">
@@ -521,9 +539,21 @@ if (isset($_POST['rating'])) {
                                                         <b>Deporte:</b><?php echo $row['deportePartida'] ?>
                                                     </td>
                                                 </tr>
-                                                <td colspan="2">
-                                                    <b>Descripción:</b><br><?php echo $row['descripcionPartida'] ?>
-                                                </td>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <b>Descripción:</b><br><?php echo $row['descripcionPartida'] ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <b>Acceso:</b><br><?php
+                                                        if ($row['accesoPublico'] == 1) {
+                                                            echo "Público";
+                                                        } else {
+                                                            echo "Privado";
+                                                        } ?>
+                                                    </td>
+                                                </tr>
                                     </tr>
                             </table>
                             <?php
@@ -531,297 +561,369 @@ if (isset($_POST['rating'])) {
                                 $query = "SELECT * FROM participante where idPartida=" . $row['idPartida'] . " AND idUsuario=" . $_SESSION['id'];
                                 $find = mysqli_query($enlace, $query);
                                 $fetch = mysqli_fetch_array($find);
+                                if ($row['accesoPublico'] == 1) {
+                                    if ($row['idUsuario'] != $_SESSION['id']) {
+                                        if (!empty($fetch)) {
 
-                                if (!empty($fetch)) {
+                                            echo '<br><div class="d-grid gap-2">
+                                                <a class="btn btn-danger" href="php/participarPartida.php?func=del&idPartida=' . $row['idPartida'] . '&id=' . $_SESSION['id'] . '" >Dejar de participar</a>
+                                                </div>';
 
-                                    echo '<br><div class="d-grid gap-2">
-                                            <a class="btn btn-danger" href="php/participarPartida.php?func=del&idPartida=' . $row['idPartida'] . '&id=' . $_SESSION['id'] . '" >Dejar de participar</a>
-                                            </div>';
-
+                                        } else {
+                                            echo '<br><div class="d-grid gap-2">
+                                                <a class="btn btn-success" href="php/participarPartida.php?func=ins&idPartida=' . $row['idPartida'] . '&id=' . $_SESSION['id'] . '" >Participar</a>
+                                                </div>';
+                                        }
+                                    } else {
+                                        if ($_SESSION['tipo'] > 2) {
+                                            echo '<br><div class="d-grid gap-2">
+                                                <a class="btn btn-danger" href="borrarPartida.php?idPartida=' . $row['idPartida'] . '" >Eliminar Partida</a>
+                                                </div>';
+                                        }
+                                    }
                                 } else {
-                                    echo '<br><div class="d-grid gap-2">
-                                            <a class="btn btn-warning" href="php/participarPartida.php?func=ins&idPartida=' . $row['idPartida'] . '&id=' . $_SESSION['id'] . '" >Participar</a>
-                                            </div>';
+                                    if ($row['idUsuario'] != $_SESSION['id']) {
+                                        if (empty($fetch)) {
+                                            $query = "SELECT * FROM soliPartida WHERE idPartida=" . $row['idPartida'] . " AND idSolicitante=" . $_SESSION['id'];
+                                            $find = mysqli_query($enlace, $query);
+                                            $fetch = mysqli_fetch_array($find);
+                                            if (!empty($fetch)) {
+                                                echo '<br><div class="d-grid gap-2">
+                                                        <a class="btn btn-danger" href="php/participarPartida.php?func=cancel&idPartida=' . $fetch['idPartida'] . '&id=' . $_SESSION['id'] . '" >Cancelar Solicitud</a>
+                                                        </div>';
+
+                                            } else { ?>
+                                                <div class="modal fade" <?php echo 'id="myModal' . $row['idPartida'] . '"'; ?> tabindex="-1"
+                                                    role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="exampleModalLongTitle">Solicitud para
+                                                                    participar en: <?php echo $row['nombrePartida']; ?></h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                            </div>
+                                                            <form action=<?php echo '"enviarSoli.php?idPartida=' . $row['idPartida'] . '"'; ?>
+                                                                method="post">
+                                                                <div class="modal-body">
+                                                                    <div class="form-floating">
+                                                                        <textarea class="form-control" placeholder="" name="solicitud"
+                                                                            id="floatingTextarea2" style="height: 100px" required></textarea>
+                                                                        <label for="floatingTextarea2">Redacta tu solicitud</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                        data-bs-dismiss="modal">Cerrar</button>
+                                                                    <button type="submit" name="subSoli" class="btn btn-success">Enviar
+                                                                        solicitud</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <?php
+                                            echo '<br><div class="d-grid gap-2">
+                                                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#myModal' . $row['idPartida'] . '">Solicitar Participar</button>
+                                                        </div>';
+                                            }
+
+
+                                        } else {
+                                            echo '<br><div class="d-grid gap-2">
+                                                        <a class="btn btn-danger" href="php/participarPartida.php?func=del&idPartida=' . $row['idPartida'] . '&id=' . $_SESSION['id'] . '" >Dejar de participar</a>
+                                                        </div>';
+                                        }
+
+                                    } else {
+                                        if ($_SESSION['tipo'] > 2) {
+                                            echo '<br><div class="d-grid gap-2">
+                                                        <a class="btn btn-danger" href="borrarPartida.php?idPartida=' . $row['idPartida'] . '" >Eliminar Partida</a>
+                                                        </div>';
+                                        }
+
+                                    }
                                 }
                             }
                             ?>
-                            </td>
+                        </td>
 
-                            <td>
-                                <table>
-                                    <tr>
-                                        <td colspan="2">
-                                            <?php echo '<b>Cancha:</b>' . $row['nombreCancha']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <?php echo '<b>Fecha:</b>' . $row['fechaPartida']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="text-align: center;">
-                                            <?php echo '<b>Hora:</b>' . $row['horaReunion']; ?>
-                                        </td>
-                                    </tr>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td colspan="2">
+                                        <?php echo '<b>Cancha:</b>' . $row['nombreCancha']; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <?php echo '<b>Fecha:</b>' . $row['fechaPartida']; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align: center;">
+                                        <?php echo '<b>Hora:</b>' . $row['horaReunion']; ?>
+                                    </td>
+                                </tr>
 
-                                </table>
-
-
-                            </td>
-                            <td>
-                                <table>
-                                    <tr>
-                                        <td colspan="2" style="text-align: center;">
-                                            <?php echo '<b>Uniforme:</b><br>' . $row['uniformes']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="text-align: center;">
-                                            <?php echo '<b>Nivel de Experiencia:</b><br>' . $row['nivelExperiencia']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="text-align: center;">
-                                            <?php echo '<b>Público:</b>' . $row['publicoDirigido']; ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="text-align: center;">
-                                            <?php echo '<b>Indicaciones extra:</b><br>' . $row['indicacionesExtra']; ?>
-                                        </td>
-                                    </tr>
-
-                                </table>
-                            </td>
-                            <?php
-                            if (!empty($_SESSION)) {
-                                if (($_SESSION['id'] == $arr[19]) || ($_SESSION['tipo'] == 0)) {
-                                    echo '<td><a class="btn btn-secondary" href="#editar"><i class="bi bi-pencil-square"></i></a>';
-                                }
-                                if (($_SESSION['tipo'] == 0)) {
-                                    echo '<a class="btn btn-danger" href="#editar"><i class="bi bi-trash"></i></a>';
-                                    /*echo '<button type="button" class="btn btn-secondary btn-lg">Editar espacio</button> <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">Eliminar espacio</button><hr>';*/
-                                }
-                                echo '</td>';
-                            }
-                            ?>
-                            </tr>
-                        <?php }
-                                    ?>
-                        </tbody>
-                        </table>
-                        <script>
-                            /* Initialization of datatables */
-                            $(document).ready(function () {
-                                $('table.display').DataTable();
-                            });
-                        </script>
+                            </table>
 
 
-                    </div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                        <br>
+                        </td>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td colspan="2" style="text-align: center;">
+                                        <?php echo '<b>Uniforme:</b><br>' . $row['uniformes']; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align: center;">
+                                        <?php echo '<b>Nivel de Experiencia:</b><br>' . $row['nivelExperiencia']; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align: center;">
+                                        <?php echo '<b>Público:</b>' . $row['publicoDirigido']; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align: center;">
+                                        <?php echo '<b>Indicaciones extra:</b><br>' . $row['indicacionesExtra']; ?>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </td>
                         <?php
                         if (!empty($_SESSION)) {
-
-                            if (($_SESSION['tipo'] == 0) || ($_SESSION['id'] == $arr[19])) {
-                                echo '<div class="d-grid gap-2">
-                                <a class="btn btn-primary" href="altaCanchas.php?id=' . $_GET['id'] . '" >Agregar Cancha</a>
-                                </div>';
+                            if (($_SESSION['id'] == $arr[19]) || ($_SESSION['tipo'] == 1)) {
+                                echo '<td><a class="btn btn-secondary" href="cambioPartida.php?id=' . $row['idPartida'] . '&idDepor=' . $idDepor . '"><i class="bi bi-pencil-square"></i></a>';
                             }
+                            if (($_SESSION['tipo'] == 1) || ($_SESSION['id'] == $arr[19])) {
+                                echo '<a class="btn btn-danger" href="borrarPartida.php?idPartida=' . $row['idPartida'] . '"><i class="bi bi-trash"></i></a>';
+                                /*echo '<button type="button" class="btn btn-secondary btn-lg">Editar espacio</button> <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">Eliminar espacio</button><hr>';*/
+                            }
+                            echo '</td>';
                         }
                         ?>
-                        <br>
-                        <table id="" class="display" style="width:100%">
-                            <thead>
-                                <tr>
+                        </tr>
+                    <?php }
+                                    ?>
+                    </tbody>
+                    </table>
+                    <script>
+                        /* Initialization of datatables */
+                        $(document).ready(function () {
+                            $('table.display').DataTable();
+                        });
+                    </script>
+                    <script> function enviarSoli() {
 
-                                    <th>Cancha</th>
-                                    <th>Deporte</th>
-                                    <th>Servicios</th>
+                            let text = document.getElementById('solicitud');
+                            const soli = text.value;
+
+                        }
+
+                    </script>
+
+                </div>
+                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+                    <br>
+                    <?php
+                    if (!empty($_SESSION)) {
+
+                        if (($_SESSION['tipo'] == 1) || ($_SESSION['id'] == $arr[19])) {
+                            echo '<div class="d-grid gap-2">
+                                <a class="btn btn-primary" href="altaCanchas.php?id=' . $_GET['id'] . '" >Agregar Cancha</a>
+                                </div>';
+                        }
+                    }
+                    ?>
+                    <br>
+                    <table id="" class="display" style="width:100%">
+                        <thead>
+                            <tr>
+
+                                <th>Cancha</th>
+                                <th>Deporte</th>
+                                <th>Servicios</th>
+                                <?php
+                                if (!empty($_SESSION)) {
+                                    if (($_SESSION['id'] == $arr[19]) || ($_SESSION['tipo'] == 0)) {
+                                        echo '<th>Controles</th>';
+                                    }
+                                    if (($_SESSION['tipo'] == 0)) {
+                                        /*echo '<button type="button" class="btn btn-secondary btn-lg">Editar espacio</button> <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">Eliminar espacio</button><hr>';*/
+                                    }
+                                }
+                                ?>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <?php
+                                $consulta = "SELECT * FROM cancha WHERE idDeportivo=$idDepor";
+                                $resultado = mysqli_query($enlace, $consulta);
+                                $contModal = 1;
+                                while ($row = mysqli_fetch_array($resultado)) {
+
+                                    ?>
+
+                                    <td>
+                                        <a href=<?php echo '"deportivo.php?id=' . $row['idDeportivo'] . '"' ?>>
+                                            <h2><?php echo $row['etiqueta'] ?></h2>
+                                        </a>
+                                        <table>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <b>Medidas:</b><?php echo '"' . $row['medidasCancha'] . '"' ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Horario: </b><br><?php echo $row['horarioCancha'] ?></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <?php echo '<b>' . $row['deporteCancha'] . '</b>'; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <?php echo '<b>Tipo de Suelo:</b><br>' . $row['tipoSueloCancha']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align: center;">
+                                                    <?php echo '<b>Equipamiento:</b><br>' . $row['equipamientoCanchaTipo']; ?>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+
+
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <?php echo '<b>Iluminación:</b>';
+                                                    if ($row['iluminacionCanchaStatus'] == 0) {
+                                                        echo '<i class="bi bi-x-square"></i>';
+                                                    } else {
+                                                        echo '<i class="bi bi-check-square"></i>';
+                                                    }
+                                                    ; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <?php echo '<b>Techado :</b>';
+                                                    if ($row['techadoCancha'] == 0) {
+                                                        echo '<i class="bi bi-x-square"></i>';
+                                                    } else {
+                                                        echo '<i class="bi bi-check-square"></i>';
+                                                    }
+                                                    ; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <?php echo '<b>Gradas: </b>';
+                                                    if ($row['gradasCanchaStatus'] == 0) {
+                                                        echo '<i class="bi bi-x-square"></i>';
+                                                    } else {
+                                                        echo '<i class="bi bi-check-square"></i>';
+                                                    }
+                                                    ; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <?php echo '<b>Baños: </b>';
+                                                    if ($row['banosCanchasStatus'] == 0) {
+                                                        echo '<i class="bi bi-x-square"></i>';
+                                                    } else {
+                                                        echo '<i class="bi bi-check-square"></i>';
+                                                    }
+                                                    ; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <?php echo '<b>Vestidores: </b>';
+                                                    if ($row['vestidoresCanchaStatus'] == 0) {
+                                                        echo '<i class="bi bi-x-square"></i>';
+                                                    } else {
+                                                        echo '<i class="bi bi-check-square"></i>';
+                                                    }
+                                                    ; ?>
+                                                </td>
+                                            </tr>
+
+
+
+                                        </table>
+                                    </td>
+
                                     <?php
                                     if (!empty($_SESSION)) {
-                                        if (($_SESSION['id'] == $arr[19]) || ($_SESSION['tipo'] == 0)) {
-                                            echo '<th>Controles</th>';
+                                        if (($_SESSION['id'] == $arr[19]) || ($_SESSION['tipo'] == 1)) {
+                                            echo '<td style="width: auto;"><a class="btn btn-secondary" href="cambioCanchas.php?id=' . $row['idCancha'] . '&idDepor=' . $idDepor . '"><i class="bi bi-pencil-square"></i></a>';
+                                            echo '<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCancha' . $contModal . '"><i class="bi bi-trash"></i></button>';
                                         }
-                                        if (($_SESSION['tipo'] == 0)) {
-                                            /*echo '<button type="button" class="btn btn-secondary btn-lg">Editar espacio</button> <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#deleteModal">Eliminar espacio</button><hr>';*/
-                                        }
+                                        echo '</td>';
                                     }
                                     ?>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <?php
-                                    $consulta = "SELECT * FROM cancha WHERE idDeportivo=$idDepor";
-                                    $resultado = mysqli_query($enlace, $consulta);
-                                    $contModal = 1;
-                                    while ($row = mysqli_fetch_array($resultado)) {
-
-                                        ?>
-
-                                        <td>
-                                            <a href=<?php echo '"deportivo.php?id=' . $row['idDeportivo'] . '"' ?>>
-                                                <h2><?php echo $row['etiqueta'] ?></h2>
-                                            </a>
-                                            <table>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <b>Medidas:</b><?php echo '"' . $row['medidasCancha'] . '"' ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><b>Horario: </b><br><?php echo $row['horarioCancha'] ?></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <table>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <?php echo '<b>' . $row['deporteCancha'] . '</b>'; ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <?php echo '<b>Tipo de Suelo:</b><br>' . $row['tipoSueloCancha']; ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2" style="text-align: center;">
-                                                        <?php echo '<b>Equipamiento:</b><br>' . $row['equipamientoCanchaTipo']; ?>
-                                                    </td>
-                                                </tr>
-
-                                            </table>
-
-
-                                        </td>
-                                        <td>
-                                            <table>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <?php echo '<b>Iluminación:</b>';
-                                                        if ($row['iluminacionCanchaStatus'] == 0) {
-                                                            echo '<i class="bi bi-x-square"></i>';
-                                                        } else {
-                                                            echo '<i class="bi bi-check-square"></i>';
-                                                        }
-                                                        ; ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <?php echo '<b>Techado :</b>';
-                                                        if ($row['techadoCancha'] == 0) {
-                                                            echo '<i class="bi bi-x-square"></i>';
-                                                        } else {
-                                                            echo '<i class="bi bi-check-square"></i>';
-                                                        }
-                                                        ; ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <?php echo '<b>Gradas: </b>';
-                                                        if ($row['gradasCanchaStatus'] == 0) {
-                                                            echo '<i class="bi bi-x-square"></i>';
-                                                        } else {
-                                                            echo '<i class="bi bi-check-square"></i>';
-                                                        }
-                                                        ; ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <?php echo '<b>Baños: </b>';
-                                                        if ($row['banosCanchasStatus'] == 0) {
-                                                            echo '<i class="bi bi-x-square"></i>';
-                                                        } else {
-                                                            echo '<i class="bi bi-check-square"></i>';
-                                                        }
-                                                        ; ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">
-                                                        <?php echo '<b>Vestidores: </b>';
-                                                        if ($row['vestidoresCanchaStatus'] == 0) {
-                                                            echo '<i class="bi bi-x-square"></i>';
-                                                        } else {
-                                                            echo '<i class="bi bi-check-square"></i>';
-                                                        }
-                                                        ; ?>
-                                                    </td>
-                                                </tr>
-
-
-
-                                            </table>
-                                        </td>
-
-                                        <?php
-                                        if (!empty($_SESSION)) {
-                                            if (($_SESSION['id'] == $arr[19]) || ($_SESSION['tipo'] == 0)) {
-                                                echo '<td style="width: auto;"><a class="btn btn-secondary" href="cambioCanchas.php?id=' . $row['idCancha'] .'&idDepor='.$idDepor. '"><i class="bi bi-pencil-square"></i></a><br>';
-                                            }
-                                            if (($_SESSION['tipo'] == 0)) {
-
-                                                echo '<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCancha' . $contModal . '"><i class="bi bi-trash"></i></button><hr>';
-
-                                                echo $row['idCancha'];
-
-
-                                            }
-                                            echo '</td>';
-                                        }
-                                        ?>
-                                    </tr>
-                                    <!-- Modal -->
-                                    <div class="modal fade" <?php echo 'id="deleteCancha' . $contModal . '"' ?> tabindex="-1"
-                                        aria-labelledby="deleteCanchaModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="deleteCanchaModalLabel">Confirmar borrar
-                                                        cancha</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    ¿Estás seguro de borrar la cancha? Ésta acción no se puede revertir.
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancelar</button>
-                                                    <a href=<?php echo '"borrarCanchas.php?id=' . $row['idCancha'] . '"'; ?>><?php echo $row['idCancha']; ?><button type="button"
-                                                            class="btn btn-danger">Borrar</button></a>
-                                                </div>
+                                <!-- Modal -->
+                                <div class="modal fade" <?php echo 'id="deleteCancha' . $contModal . '"' ?> tabindex="-1"
+                                    aria-labelledby="deleteCanchaModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteCanchaModalLabel">Confirmar borrar
+                                                    cancha</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro de borrar la cancha? Ésta acción no se puede revertir.
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <a href=<?php echo '"borrarCanchas.php?id=' . $row['idCancha'] . '"'; ?>><?php echo $row['idCancha']; ?><button type="button"
+                                                        class="btn btn-danger">Borrar</button></a>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                                 <?php
-                                    $contModal++;
-                                    }
-                                    ?>
-                            </tbody>
-                        </table>
+                                $contModal++;
+                                }
+                                ?>
+                        </tbody>
+                    </table>
 
 
 
-                        <script>
-                            /* Initialization of datatables */
-                            $(document).ready(function () {
-                                $('table.display').DataTable();
-                            });
-                        </script>
-                    </div>
-
+                    <script>
+                        /* Initialization of datatables */
+                        $(document).ready(function () {
+                            $('table.display').DataTable();
+                        });
+                    </script>
                 </div>
+
             </div>
         </div>
+    </div>
     </div><br>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -830,6 +932,39 @@ if (isset($_POST['rating'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
     integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
     crossorigin="anonymous"></script>
+<script>
+    // Guardar la posición del scroll y la pestaña activa
+    document.addEventListener('DOMContentLoaded', () => {
+        // Restaurar la pestaña activa
+        const activeTabId = localStorage.getItem('activeTab');
+        if (activeTabId) {
+            const activeTab = document.getElementById(activeTabId);
+            if (activeTab) {
+                const tab = new bootstrap.Tab(activeTab);
+                tab.show();
+            }
+        }
+
+        // Restaurar la posición del scroll
+        const scrollPosition = localStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo(0, parseInt(scrollPosition, 10));
+        }
+    });
+
+    // Guardar la pestaña activa y la posición del scroll antes de salir
+    window.addEventListener('beforeunload', () => {
+        // Guardar la posición del scroll
+        localStorage.setItem('scrollPosition', window.scrollY);
+    });
+
+    // Guardar la pestaña activa cuando cambie
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', (event) => {
+            localStorage.setItem('activeTab', event.target.id);
+        });
+    });
+</script>
 
 </html>
 <?php
@@ -855,7 +990,7 @@ function updateRate($link, $cons, $idUser)
         echo '<script> window.location.href = "login.php";</script>';
     } else {
         $query = mysqli_query($link, $cons);
-        echo '<script> window.location.href = "'.$_SERVER['HTTP_REFERER'].'";</script>';
+        echo '<script> window.location.href = "' . $_SERVER['HTTP_REFERER'] . '";</script>';
     }
 }
 

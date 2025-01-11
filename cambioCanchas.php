@@ -8,7 +8,7 @@ $idDepor=$_GET['idDepor'];
 $consulta="SELECT cancha.*, deportivo.nombre FROM cancha JOIN deportivo ON cancha.idDeportivo = deportivo.idDeportivo where idCancha=".$id;
 $query=mysqli_query($enlace,$consulta);
 $info=mysqli_fetch_array($query);
-$consulta="SELECT * FROM deportivo where idDeportivo=".$id;
+$consulta="SELECT * FROM deportivo where idDeportivo=".$idDepor;
 $query=mysqli_query($enlace,$consulta);
 $depor=mysqli_fetch_array($query);
 
